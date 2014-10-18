@@ -28,24 +28,32 @@ where $\psi_G$ and $\psi_{at}$ encode the unary potential of global and regional
 \end{figure*}
 
 \subsection{Label Prediction}
-We utilize a label classifier which leverages convolutional neural network in order to predict missing label at test time. In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network pre-trained on ImageNet, as the appearance feature, and topic distribution which learned from pLSA, as topic distribution.
+We utilize a label classifier which leverages Convolutional Neural Network in order to predict missing label at test time. In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of Convolutional Neural Network pre-trained on ImageNet \cite{deng2009imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
 
 Unfortunately, the appearance model cannot be trained due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time. As far as we concerned, fine-tuning a discriminatively pre-trained network is very effective in terms of task performance. 
 
-We model each images as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis(pLSA), which can recover visual models of semantic labels  in a completely unsupervised manner. Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. Here we regard fully-connected layer as input when we consider each neuron as a visual word. We denote each visual word(neuron) as $w_i$, then the occurrence frequency of image $x_j$ on $w_i$ is the i-th dimension of $x_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,x_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
-
+We model each images as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA), which can recover visual models of semantic labels  in a completely unsupervised manner. Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. Here we regard fully-connected layer as input when we consider each neuron as a visual word and each image as a document. We denote each visual word (neuron) as $w_i$, then the occurrence frequency of image $j$ on $w_i$ is the i-th dimension of $d_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,d_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
 \begin{equation}
-  P(w_i|x_j) = \sum_{k=1}^K{P(t_k|x_j)P(w_i|t_k)}
+  P(w_i|d_j) = \sum_{k=1}^K{P(t_k|d_j)P(w_i|t_k)}
 \end{equation}
-where $P(t_k|x_j)$ is the probability of topic $t_k$ occurring in image $x_j$.
-
-\subsection{Label Consistency}
-We require that the superpixel labels be consistent with the image labels: if any superpixel $x_p$ takes the label $i$, then image label indicator $y_i=1$; otherwise $y_i=0$. Such constraints can be encode by the following potential:
+where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$.
+Just by concatenating the appearance feature $d_j$ and topic distribution $P(w_i|d_j)$, we formulate image's global feature as $I$. Then, we define the label presence potential $\psi_{G}$ as follow:
 \begin{equation}
-    \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
-    C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
+    \psi_{G}(y_i,I) = -\log f_{i}(I)
 \end{equation}
-where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels.
+where $f_{i}(I)$ is an SVM score function associated label $i$. 
+
+\subsection{Label Correlation and Co-occurrence}
+
+Different from the supervised semantic segmentation, the pixel-level label is not given. It is challenging because large appearance variations in cluttered backgrounds. However, the context contain some useful latent information which can be learned for semantic label noise reduction. Due to the unknown label of superpixels, learning these latent information is an unsupervised learning problem. 
+
+Multiple labels do not appear independently but occur correlatively and usually interact with each other at semantic space (as shown in Fig. \ref{fig:graphmodel} (a)). The inter-label correlation matrix is constructed to characterize the interdependency between semantic concepts and helps to model the inter-label co-occurrence among feature space of superpixels.
+
+The key idea is to analyze the change in the classification scores when artificially blackout different regions of the image. We observe that blackout a region that contains an discriminative region causes a massive confusion in cluster condition. This produces for each image a set of sub-windows from segmentation that are deemed likely to contain the discriminative region for specific semantic label. After localizing discriminative region in cluster condition, we can construct the inter-label correlation matrix by using both the available image-level label and region-level overlap. More concretely, we define the label correlation potential $\psi_R$ as follow:
+\begin{equation}
+    \psi_{R}(y_i,y_j) = R(i,j) \cdot Cooc(i,j) \cdot I(y_i=y_j)
+\end{equation}
+where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative region between category $i$ and $j$, $Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))$ measures the label co-occurrence based on statistical rules and $I(\cdot)$ is the indicator function.
 
 \subsection{Appearance Model and Topic Model}
 
@@ -82,13 +90,13 @@ And the intra-level energy cost $\phi_{intra}$ is defined as:
 \end{equation}
 where $Sim(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel $x_p$ and $x_q$, $R(h_p,h_q) \in [0,1]$ is a learnt correlation between label $h_p$ and $h_q$. Hence, we pay a high cost for the similar superpixels if they were assigned different labels and for the superpixels which were assigned an irrelevant label to the context.
 
-\subsection{Label Correlation and Co-occurrence}
-
-Different from the supervised semantic segmentation, the pixel-level label is not given. It is challenging because large appearance variations in cluttered backgrounds. However, the context contain some useful latent information which can be learned for semantic label noise reduction. Due to the unknown label of superpixels, learning these latent information is an unsupervised learning problem. 
-
-Multiple labels do not appear independently but occur correlatively and usually interact with each other at semantic space. The inter-label correlation matrix is constructed to characterize the interdependency between semantic concepts and helps to model the inter-label co-occurrence among feature space of superpixels.
-
-The key idea is to analyze the change in the classification scores when artificially blackout different regions of the image. We observe that blackout a region that contains an discriminative region causes a massive confusion in cluster condition. This produces for each image a set of sub-windows from segmentation that are deemed likely to contain the discriminative region for specific semantic label. After localizing discriminative region in cluster condition, we can construct the inter-label correlation matrix by using both the available image-level label and region-level overlap.
+\subsection{Label Consistency}
+We require that the superpixel labels be consistent with the image labels: if any superpixel $x_p$ takes the label $i$, then image label indicator $y_i=1$; otherwise $y_i=0$. Such constraints can be encode by the following potential:
+\begin{equation}
+    \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
+    C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
+\end{equation}
+where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels.
 
 \subsection{Joint Inference with Alternate Procedure}
 The energy minimization problem \eqref{eq:energyfunction} can be solved in the following two alternate optimization steps:
