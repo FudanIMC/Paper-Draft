@@ -1,12 +1,12 @@
 % !TEX root = 15cvpr.tex
 
 \section{The Proposed Model}
-Assume we have a set of weakly labeled images and each image is oversegmented into several superpixels. 
-We fomulate this weakly supervised semantic segmentation as a joint learning problem which we factor into multi-class and binary CRFs.
+Assume we have a set of weakly labeled images and each image is oversegmented into several superpixels.
+We formulate this weakly supervised semantic segmentation as a joint learning problem which we factor into multi-class and binary CRFs.
 
 ...
 
-Suppose we have a set of weakly labeled images $\mathcal{I}=\{I^k\}_{k=1}^M$ and each image is oversegmented into $m_k$ superpixels $\mathrm{X}^k=\{x_i^k\}_{p=1}^{m_k}$ by \cite{arbelaez2014multiscale}.  We describe each superpixel $x_i^k$ by its appearance model and topic model (see Sec. \ref{sec:appearancetopic} for details). Let $\boldsymbol{y}^k = (y_1^k,...,y_L^k)^{\rm T}$ denote  a vetor of the $L$ binary label variables, \ie $y_i^k \in \{0,1\}$, where $y_i^k=1$ indicates that category $i$ is present in image $k$, and $0$ otherwise. For each superpixel $x_p^k$, we define a random variable $h_p^k \in \{1,...,L\}$ to represent its semantic category.
+Suppose we have a set of weakly labeled images $\mathcal{I}=\{I^k\}_{k=1}^M$ and each image is oversegmented into $m_k$ superpixels $\mathrm{X}^k=\{x_i^k\}_{p=1}^{m_k}$ by \cite{arbelaez2014multiscale}.  We describe each superpixel $x_i^k$ by its appearance model and topic model (see Sec. \ref{sec:appearancetopic} for details). Let $\boldsymbol{y}^k = (y_1^k,...,y_L^k)^{\rm T}$ denote  a vetoer of the $L$ binary label variables, \ie $y_i^k \in \{0,1\}$, where $y_i^k=1$ indicates that category $i$ is present in image $k$, and $0$ otherwise. For each superpixel $x_p^k$, we define a random variable $h_p^k \in \{1,...,L\}$ to represent its semantic category.
 
 
 Our goal is to find an optimal label configuration that ... To tackle this problem, we build a conditional random field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel variables $\boldsymbol{h}$. We connect each superpixel variables to its neighbors to encode a local smoothness constraint. Specifically, let $\mathcal{E}$ donate the superpixel neighborhood, we define an energy function $E$ with five types of potential as follow:
@@ -27,11 +27,23 @@ where $\psi_G$ and $\psi_{at}$ encode the unary potential of global and regional
     \label{fig:graphmodel}
 \end{figure*}
 
+\subsection{Label Prediction}
+We utilize a label classifier which leverages convolutional neural network in order to predict missing label at test time. In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network pre-trained on ImageNet, as the appearance feature, and topic distribution which learned from pLSA, as topic distribution.
+
+Unfortunately, the appearance model cannot be trained due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time. As far as we concerned, fine-tuning a discriminatively pre-trained network is very effective in terms of task performance. 
+
+We model each images as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis(pLSA), which can recover visual models of semantic labels  in a completely unsupervised manner. Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. Here we regard fully-connected layer as input when we consider each neuron as a visual word. We denote each visual word(neuron) as $w_i$, then the occurrence frequency of image $x_j$ on $w_i$ is the i-th dimension of $x_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,x_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
+
+\begin{equation}
+  P(w_i|x_j) = \sum_{k=1}^K{P(t_k|x_j)P(w_i|t_k)}
+\end{equation}
+where $P(t_k|x_j)$ is the probability of topic $t_k$ occurring in image $x_j$.
+
 \subsection{Label Consistency}
 We require that the superpixel labels be consistent with the image labels: if any superpixel $x_p$ takes the label $i$, then image label indicator $y_i=1$; otherwise $y_i=0$. Such constraints can be encode by the following potential:
 \begin{equation}
-    \psi_{C}(\boldsymbol{y},\boldsymbol{h}) = 
-    C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i) 
+    \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
+    C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
 \end{equation}
 where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels.
 
@@ -41,13 +53,13 @@ We include both appearance and topic model as follow:
 \begin{equation}
     \begin{aligned}
         \psi_{at}(h_p,x_p) = &- \log \big\{ w_1\phi_a(h_p,a_p,\theta_a) \\
-        &+ w_2\phi_t(h_p,t_p,\theta_t) \big\} 
+        &+ w_2\phi_t(h_p,t_p,\theta_t) \big\}
     \end{aligned}
 \end{equation}
 where $a_p, t_p$ are the appearance and topic feature vectors extracted from the superpixels, $\theta_a, \theta_t$ donate the parameters with repect to appearance model and topic model, $\{w_i\}|_{i=1}^2$ are the weighting coefficients for the unary terms. We define the appearance model $\phi_a(h_p,a_p,\theta_a) = f_{h_p}(a_p,\theta_a)$ and topic model $\phi_t(h_p,t_p,\theta_t) = g_{h_p}(t_p,\theta_t)$ measuring how well the local appearance $a_p$ and topic $t_p$ matches the semantic label $h_p$.
 
 \subsection{Spatial Constraints and Hierarchical model}
-We 
+We
 \begin{equation}
     \psi_{S}(h_p,h_q) =
     \begin{cases}
@@ -58,7 +70,7 @@ We
         0 &\mbox{ otherwise }
     \end{cases}
 \end{equation}
-where $l_p$ indicates the quantization level that the superpixel $x_p$ belongs to. 
+where $l_p$ indicates the quantization level that the superpixel $x_p$ belongs to.
 The inter-level energy cost $\phi_{inter}$ is defined as:
 \begin{equation}
     \phi_{inter}(h_p,h_q) = \gamma \cdot O(x_p,x_q) \cdot I(h_p \neq h_q)
@@ -72,13 +84,18 @@ where $Sim(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel
 
 \subsection{Label Correlation and Co-occurrence}
 
+Different from the supervised semantic segmentation, the pixel-level label is not given. It is challenging because large appearance variations in cluttered backgrounds. However, the context contain some useful latent information which can be learned for semantic label noise reduction. Due to the unknown label of superpixels, learning these latent information is an unsupervised learning problem. 
+
+Multiple labels do not appear independently but occur correlatively and usually interact with each other at semantic space. The inter-label correlation matrix is constructed to characterize the interdependency between semantic concepts and helps to model the inter-label co-occurrence among feature space of superpixels.
+
+The key idea is to analyze the change in the classification scores when artificially blackout different regions of the image. We observe that blackout a region that contains an discriminative region causes a massive confusion in cluster condition. This produces for each image a set of sub-windows from segmentation that are deemed likely to contain the discriminative region for specific semantic label. After localizing discriminative region in cluster condition, we can construct the inter-label correlation matrix by using both the available image-level label and region-level overlap.
 
 \subsection{Joint Inference with Alternate Procedure}
 The energy minimization problem \eqref{eq:energyfunction} can be solved in the following two alternate optimization steps:
 \begin{equation}
     \label{eq:binaryCRF}
     \begin{aligned}
-        \boldsymbol{y}^* = \arg\min_{\boldsymbol{y}} &\sum_{i} {\psi_{G}(y_i,I)} + \frac{1}{2} \psi_{C}(\boldsymbol{y},\boldsymbol{h}^*) \\ &+ \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)}, 
+        \boldsymbol{y}^* = \arg\min_{\boldsymbol{y}} &\sum_{i} {\psi_{G}(y_i,I)} + \frac{1}{2} \psi_{C}(\boldsymbol{y},\boldsymbol{h}^*) \\ &+ \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)},
     \end{aligned}
 \end{equation}
 \begin{equation}
@@ -104,7 +121,7 @@ As a standard binary CRF problem, the first subproblem in Eq. \eqref{eq:binaryCR
 \label{sec:appearancetopic}
 We use Convolutional Neural Network (CNN) to encode the superpixels' appearance. CNN has made a significant breakthrough in object detection and semantic segmentation tasks \cite{girshick2013rich}. As demonstrated in \cite{girshick2013rich}, the classification network trained on ImageNet \cite{deng2009imagenet} can generalize well to the detection task. We train a classification model on ILSVRC with the same setup to \cite{girshick2013rich}, which uses five convolutional layers and three fully-connected layers. We represent each superpixel by the \textit{fc6} layer, which is the first fully-connected layer containing 4096 neurons. Therefore, the appearance representation of each superpixel is a feature vector with 4096 dimentions.
 
-Moreover, we learn the latent category (known as topic model) from the superpixels. 
+Moreover, we learn the latent category (known as topic model) from the superpixels.
 
 
 

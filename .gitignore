@@ -108,5 +108,5 @@ sympy-plots-for-*.tex/
 # xindy
 *.xdy
 
-# pdf
-*.pdf
+# Final PDF
+15cvpr.pdf
