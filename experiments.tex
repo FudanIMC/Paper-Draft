@@ -1,3 +1,32 @@
 % !TEX root = 15cvpr.tex
-
 \section{Experiments}
+In this section, we evaluate 
+
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Methods & Supervision & Per-Class (\%) \\
+\hline
+Liu \etal \cite{liu2011nonparametric} & full & 24 \\
+Tighe \etal \cite{tighe2010superparsing} & full & 29.4 \\
+Tighe \etal \cite{Tighe2013Finding} & full & 39.2 \\
+Farabet \etal \cite{farabet2013learning} & full & \bf{50.8} \\
+\hline
+Vezhnevets \etal \cite{vezhnevets2011weakly} & weak & 14 \\
+Vezhnevets \etal \cite{vezhnevets2012weakly} & weak & 21 \\
+Zhang \etal \cite{zhang2013sparse} & weak & 26 \\
+Xu \etal \cite{xu2014tell} & weak & 27.9 \\
+Ours & weak & \bf{29.9} \\
+\hline
+\end{tabular}
+\end{center}
+%\vspace{-3mm}
+\caption{Accuracies (\%) of our approach on SIFT-flow dataset, in comparison with state-of-the-art methods.}
+\label{tab:ExpSIFTflow_Test}
+\end{table}
+
+\textbf{SIFT-flow}
+
+The SIFT Flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 33 unique semantic labels. It has 2688 images, 2488 used for training and 200 for testing. This dataset mainly consists of outdoor images, which share high similarities in a certain category. So we can easily find the discriminative cues from the images. Average per-class accuracies of our approach and the other related work are reported in Table \ref{tab:ExpSIFTflow_Test}. Due to the well generalization of our approach, we outperform previous weakly-supervised methods and some fully-supervised methods. Farabet won a best performance with deep learning techniques in \cite{farabet2013learning}, which leads the state-of-the-art performance of fully-supervised methods.
