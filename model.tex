@@ -129,12 +129,3 @@ As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:bin
 \end{algorithm}
 
 
-\if
-\section{Appearance and Topic Model Generation}
-\label{sec:appearancetopic}
-We use Convolutional Neural Network (CNN) to encode the superpixels' appearance. CNN has made a significant breakthrough in object detection and semantic segmentation tasks \cite{girshick2013rich}. As demonstrated in \cite{girshick2013rich}, the classification network trained on ImageNet \cite{deng2009imagenet} can generalize well to the detection task. We train a classification model on ILSVRC with the same setup to \cite{girshick2013rich}, which uses five convolutional layers and three fully-connected layers. We represent each superpixel by the \textit{fc6} layer, which is the first fully-connected layer containing 4096 neurons. Therefore, the appearance representation of each superpixel is a feature vector with 4096 dimentions.
-
-Moreover, we learn the latent category (known as topic model) from the superpixels.
-\fi
-
-
