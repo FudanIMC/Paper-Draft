@@ -1,5 +1,12 @@
 % !TEX root = 15cvpr.tex
 \section{Experiments}
+In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of Convolutional Neural Network\cite{simonyan2014very} pre-trained on ImageNet \cite{deng2009imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
+
+As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 33 categories on the SiftFlow dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset. 
+Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
+
+To verify both robustness and effctiveness o our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset.
+
 In this section, we evaluate 
 
 
