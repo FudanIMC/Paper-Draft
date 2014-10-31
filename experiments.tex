@@ -1,15 +1,15 @@
 % !TEX root = 15cvpr.tex
 \section{Experiments}
-In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of Convolutional Neural Network\cite{simonyan2014very} pre-trained on ImageNet \cite{deng2009imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
+In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network\cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
 
-As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 33 categories on the SiftFlow dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset. 
+As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 33 categories on the SiftFlow dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
 Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
 
-To verify both robustness and effctiveness o our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset.
+To verify both robustness and effectiveness o our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset.
 
 
 \subsection{Comparison with State of the Art}
-In this section, we compare our approach with the existing state of the art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on three real-world datasets: MSRC-21 \cite{shotton2006textonboost}, PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}. 
+In this section, we compare our approach with the existing state of the art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on three real-world datasets: MSRC-21 \cite{shotton2006textonboost}, PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
 
 \begin{table*}[htp] \small
 \begin{center}
@@ -28,7 +28,7 @@ Weakly & Vezhnevets \etal \cite{vezhnevets2011weakly} & 67 & 5 & 80 & 58 & 81 & 
 Supervised & Zhang \etal \cite{zhang2013sparse} & 69 & 63 & 93 & 92 & 62 & 75 & 78 & 79 & 64 & 95 & 79 & 93 & 62 & 76 & 32 & 95 & 48 & 83 & 63 & 38 & 68 & 15 \\
 & Ours & \\
 \end{tabular}
-\caption{Quantitative results on the MSRC-21 dataset \cite{shotton2006textonboost}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. } 
+\caption{Quantitative results on the MSRC-21 dataset \cite{shotton2006textonboost}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
 \label{tab:ExpMSRC_test}
 \end{center}
 \vskip -0.1in
@@ -36,7 +36,7 @@ Supervised & Zhang \etal \cite{zhang2013sparse} & 69 & 63 & 93 & 92 & 62 & 75 & 
 
 
 \textbf{MSRC-21}
-The MSRC segmentation dataset contains 591 images of resolution 320x213 pixels, accompanied with a hand labeled object segmentation of 21 categories \cite{shotton2006textonboost}. This dataset has been widely adopted for semantic segmentation. Pixels on the boundaries of objects are usually labeled as backgound and not taken into consideration in these segmentations. For fair comparison, we use standard dataset spilt (276 images for training and 256 images for testing) provided by \cite{shotton2006textonboost}. 
+The MSRC segmentation dataset contains 591 images of resolution 320x213 pixels, accompanied with a hand labeled object segmentation of 21 categories \cite{shotton2006textonboost}. This dataset has been widely adopted for semantic segmentation. Pixels on the boundaries of objects are usually labeled as background and not taken into consideration in these segmentations. For fair comparison, we use standard dataset split (276 images for training and 256 images for testing) provided by \cite{shotton2006textonboost}.
 
 
 \begin{table*}[htp] \small
@@ -54,7 +54,7 @@ The MSRC segmentation dataset contains 591 images of resolution 320x213 pixels, 
 Weakly & Zhang \etal \cite{zhang2013sparse} & 24 & $-$ & 48 & 20 & 26 & 25 & 3 & 7 & 23 & 13 & 38 & 19 & 15 & 39 & 17 & 18 & 25 & 47 & 9 & 41 & 17 & 33 \\
 Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19 & 25 & 29 & 26 & 19 & 12 & 18 & 4 & 28 & 28 \\
 \end{tabular}
-\caption{Quantitative analysis of VOC2007 results \cite{pascal-voc-2007}, intersection vs. union measure, define as $\frac{TP}{TP + FN + FP}$, in comparison with state-of-the-art methods. The results of fully supervised methods are taken from \cite{pascal-voc-2007}. } 
+\caption{Quantitative analysis of VOC2007 results \cite{pascal-voc-2007}, intersection vs. union measure, define as $\frac{TP}{TP + FN + FP}$, in comparison with state-of-the-art methods. The results of fully supervised methods are taken from \cite{pascal-voc-2007}. }
 \label{tab:ExpVOC_test}
 \end{center}
 \vskip -0.1in
@@ -64,9 +64,9 @@ Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19
 This dataset was used for the PASCAL Visual Object Category segmentation contest 2007. It is especially challenging for the presence of background clutter, illumination effect and occlusions. It contains 5011 training images, and 4952 test images. Within the training set, for a subset of 422 images which are suitable for evaluation of the segmentation task, the object in these images are marked at pixel level, while the objects in the other images only have the bounding boxes indicating the location of the object and rough boundaries. And there are 20 foreground and 1 background classes in this dataset used for the task of classification, detection, and segmentation.
 
 
-\textbf{SIFT-flow} The SIFT Flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 33 unique semantic labels. It has 2688 images, 2488 used for training and 200 for testing. This dataset is very challenging for the reason that there are large number of classes in the dataset and $4.43$ classes per image. Besides, the frequence of classes is distributed with a pow-low.
+\textbf{SIFT-flow} The SIFT Flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 33 unique semantic labels. It has 2688 images, 2488 used for training and 200 for testing. This dataset is very challenging for the reason that there are large number of classes in the dataset and $4.43$ classes per image. Besides, the frequency of classes is distributed with a pow-low.
 
-\textbf{Quantitative and Qualitative Results} Comparions of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpMSRC_test}, \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the MSRC dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotation are more efficiently utilized by our method. In the meantime, the results conducted by our framework is comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtain on VOC2007 and SIFT-flow dataset, which are more challenging than the previous one. Figures \ref{fig:MSRC}, \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the success and failure cases of three dataset respectively.
+\textbf{Quantitative and Qualitative Results} Comparisons of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpMSRC_test}, \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the MSRC dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotation are more efficiently utilized by our method. In the meantime, the results conducted by our framework is comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtain on VOC2007 and SIFT-flow dataset, which are more challenging than the previous one. Figures \ref{fig:MSRC}, \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the success and failure cases of three dataset respectively.
 
 \begin{table}[!h]
 \begin{center}
