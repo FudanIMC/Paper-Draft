@@ -4,9 +4,14 @@ Aiming to assign each pixel in an image to one of predefined semantic categories
 
 Recently, a few works have been proposed to address the semantic segmentation problem under the weakly supervised settings, where each training image is annotated by image-level labels specifying which classes are present but no pixel-level annotation is given \cite{verbeek2007region,vezhnevets2010towards,vezhnevets2011weakly,vezhnevets2012weakly,xu2014tell,zhang2013sparse,zhang2013probabilistic}. Comparing to the trandtional supervised semantic segmentation, such weakly supervised method is more flexible in real-world applications for the image-level annotated images are much easier to obtain. With the prevalence of photo sharing websites and collaborative image tagging system, such as Flickr, which host vast of digital images with user provided tags, this weakly supervised setting for image parsing become feasible.
 
-It is worth noting that the annotations of collaboratively-tagged images may not be accurate (incorrect or incomplete) in practice. However such noisely tagged annotation has been ignored in recent work and  there are some extra prerequisites (\eg labels must be precise and complete), actually, for the inital image-level labels in existed weakly supervised semantic segmentation systems. To be honest, collecting such training images that satisfy all these constraints is still a labor-intensive task. Figure \ref{fig:noisylabel} illustrates a set of representative real-world images and its associated tags. We can observe that only limited tags accurately describe the visual content of the image, while ohter tags are imprecise. Meanwhile, some important tags, which are highly associated with the image, are missing.
+It is worth noting that the annotations of collaboratively-tagged images may not be accurate (incorrect or incomplete) in practice. However such noisely tagged annotation has been ignored in recent work and  there are some extra prerequisites (\eg labels must be precise and complete), actually, for the inital image-level labels in existed weakly supervised semantic segmentation systems. To be honest, collecting such training images that satisfy all these constraints is still a labor-intensive task. Figure \ref{fig:noisylabel} illustrates a set of representative real-world images and its associated tags. We can observe that only limited tags accurately describe the visual content of the image, while ohter tags are imprecise. Meanwhile, some important tags, which are highly associated with the image, are missing. Therefore, the main challenge lies in how to utilize the noisily labeled images for semantic segmentation. 
 
-Therefore, the main challenge lies in how to utilize the noisily labeled images for semantic segmentation. (related work)
+In this paper, we present a weakly supervised method which achieves results competitive with fully supervised methods.The mainly contributions of this paper are summarized as follows:
+\begin{enumerate}
+  \item A new
+  \item
+  \item A new joint inference with alternate procedure
+\end{enumerate}
 
 \if
  Fortunately, owing to the collaborative image tagging system, \eg Flickr, we can easily obtain a large mount of manually labeled images provided by Internet users, though these image-level labels might be noisy (incorrect or incomplete). Therefore, the main challenge lies in how to utilize the noisily labeled images for semantic segmentation (see Figure \ref{fig:noisylabel} for an illustration).
@@ -25,12 +30,3 @@ Therefore, the main challenge lies in how to utilize the noisily labeled images 
    ugly clash.}
 \label{fig:noisylabel}
 \end{figure}
-
-In this paper, we present a weakly supervised method which achieves results competitive with fully supervised methods.(abstract)
-
-The mainly contributions of this paper are summarized as follows:
-\begin{enumerate}
-  \item A new
-  \item
-  \item A new joint inference with alternate procedure
-\end{enumerate}
