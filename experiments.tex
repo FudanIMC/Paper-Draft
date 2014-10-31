@@ -9,21 +9,47 @@ To verify both robustness and effctiveness o our method to noisy annotation cond
 
 
 \subsection{Comparison with State of the Art}
-In this section, we compare our approach with the existing state of art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
+In this section, we compare our approach with the existing state of the art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on three real-world datasets: MSRC-21 \cite{shotton2006textonboost}, PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}. 
+
+\begin{table*}[htp] \small
+\begin{center}
+\begin{tabular}{l|l|c| p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm}}
+
+& Methods & \rotatebox{90}{average} & \rotatebox{90}{building} & \rotatebox{90}{grass} & \rotatebox{90}{tree} & \rotatebox{90}{cow} & \rotatebox{90}{sheep} & \rotatebox{90}{sky} & \rotatebox{90}{aeroplane} & \rotatebox{90}{water} & \rotatebox{90}{face} & \rotatebox{90}{car} & \rotatebox{90}{bicycle} & \rotatebox{90}{flower} & \rotatebox{90}{sign} & \rotatebox{90}{bird} & \rotatebox{90}{book} & \rotatebox{90}{chair} & \rotatebox{90}{road} & \rotatebox{90}{cat} & \rotatebox{90}{dog} & \rotatebox{90}{body} & \rotatebox{90}{boat} \\
+\hline
+ & Shotton \etal \cite{shotton2006textonboost} & 58 & 62 & 98 & 86 & 58 & 50 &83 & 60 & 53 & 74 & 63 & 75 & 63 & 35 & 19 & 92 & 15 & 86 & 54 & 19 & 62 & 7 \\
+ Fully & Yang \etal \cite{yang2007multiple} & 62 & 63 & 98 & 90 & 66 & 54 & 86 & 63 & 71 & 83 & 71 & 80 & 71 & 38 & 23 & 88 & 23 & 88 & 33 & 34 & 43 & 32 \\
+ Supervised& Shotton \etal \cite{shotton2008semantic} & 67 & 49 & 88 & 79 & 97 & 97 & 78 & 82 & 54 & 87 & 74 & 72 & 74 & 36 & 24 & 93 & 51 & 78 & 75 & 35 & 66 & 18 \\
+ & Ladicky \etal \cite{ladicky2009associative} & 75 & 80 & 96 & 86 & 74 & 87 & 99 & 74 & 87 & 86 & 87 & 82 & 97 & 95 & 30 & 86 & 31 & 95 & 51 & 69 & 66 & 9 \\
+ & Lucchi \etal \cite{lucchi2012structured} & 76 & 59 & 90 & 92 & 82 & 83 & 94 & 91 & 80 & 85 &88 & 96 & 89 & 73 & 48 & 96 & 62 & 81 & 87 & 33 & 44 & 30 \\
+\hline
+& Verbeek and Triggs \cite{verbeek2007region} & 50 & 45 & 64 & 71 & 75 & 74 & 86 & 81 & 47 & 1 & 73 & 55 & 88 & 6 & 6 & 63 & 18 & 80 & 27 & 26 & 55 & 8 \\
+Weakly & Vezhnevets \etal \cite{vezhnevets2011weakly} & 67 & 5 & 80 & 58 & 81 & 97 & 87 & 99 & 63 & 91 & 86 & 98 & 82 & 67 & 46 & 59 & 45 & 66 & 64 & 45 & 33 & 54 \\
+Supervised & Zhang \etal \cite{zhang2013sparse} & 69 & 63 & 93 & 92 & 62 & 75 & 78 & 79 & 64 & 95 & 79 & 93 & 62 & 76 & 32 & 95 & 48 & 83 & 63 & 38 & 68 & 15 \\
+& Ours & \\
+\end{tabular}
+\caption{Quantitative results on the MSRC-21 dataset \cite{shotton2006textonboost}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. } 
+\label{tab:ExpMSRC_test}
+\end{center}
+\vskip -0.1in
+\end{table*}
 
 
-\begin{table*}[!htp] \small
-\label{ExpVOC_test}
+\textbf{MSRC-21}
+The MSRC segmentation dataset contains 591 images of resolution 320x213 pixels, accompanied with a hand labeled object segmentation of 21 categories \cite{shotton2006textonboost}. This dataset has been widely adopted for semantic segmentation. Pixels on the boundaries of objects are usually labeled as backgound and not taken into consideration in these segmentations. For fair comparison, we use standard dataset spilt (276 images for training and 256 images for testing) provided by \cite{shotton2006textonboost}. 
+
+
+\begin{table*}[htp] \small
 \begin{center}
 \begin{tabular}{l|l|c| p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm}}
 
 & Methods & \rotatebox{90}{average} & \rotatebox{90}{background} & \rotatebox{90}{aeroplane} & \rotatebox{90}{bicycle} & \rotatebox{90}{bird} & \rotatebox{90}{boat} & \rotatebox{90}{bottle} & \rotatebox{90}{bus} & \rotatebox{90}{car} & \rotatebox{90}{cat} & \rotatebox{90}{chair} & \rotatebox{90}{cow} & \rotatebox{90}{diningtable} & \rotatebox{90}{dog} & \rotatebox{90}{horse} & \rotatebox{90}{motorbike} & \rotatebox{90}{person} & \rotatebox{90}{pottedplant} & \rotatebox{90}{sheep} & \rotatebox{90}{sofa} & \rotatebox{90}{train} & \rotatebox{90}{tv/monitor} \\
 \hline
- & Brookes & 9 & \bf{78} & 6 & 0 & 0 & 0 & 0 & 9 & 5 & 10 & 1 & 2 & 11 & 0 & 6 & 6 & 29 & 2 & 2 & 0 & 11 & 0 \\
- Fully & INRIA & 24 & 3 & 1 & 45 & \bf{34} & 16 & \bf{20} & 0 & 68 & \bf{58} & 11 & 0 & \bf{44} & 8 & 1 & 2 & 59 & 37 & 0 & 6 & 19 & 63 \\
- Supervised& MPI & 28 & 3 & \bf{30} & 31 & 10  & \bf{41} & 7 & 8 & 73 & 56 & \bf{37} & \bf{11} & 19 & 2 & 15 & 24 & \bf{67} & 26 & 9 & 3 & 5 & 55\\
- & TKK & \bf{30} & 23 &19 & 21 & 5 & 16 & 3 & 1 & \bf{78} & 1 & 3 & 1 & 23 & \bf{69} & \bf{44} & \bf{42} & 0 & \bf{65} & \bf{30} & \bf{35} & \bf{89} & \bf{71} \\
- & UoCTTI & 21 & 3 & 24 & \bf{53} & 0 & 2 & 16 & \bf{49} & 33 & 1 & 6 & 10 & 0 & 0 & 3 & 21 & 60 & 11 & 0 & 26 & 72 & 58 \\
+ & Brookes & 9 & 78 & 6 & 0 & 0 & 0 & 0 & 9 & 5 & 10 & 1 & 2 & 11 & 0 & 6 & 6 & 29 & 2 & 2 & 0 & 11 & 0 \\
+ Fully & INRIA & 24 & 3 & 1 & 45 & 34 & 16 & 20 & 0 & 68 & 58 & 11 & 0 & 44 & 8 & 1 & 2 & 59 & 37 & 0 & 6 & 19 & 63 \\
+ Supervised& MPI & 28 & 3 & 30 & 31 & 10  & 41 & 7 & 8 & 73 & 56 & 37 & 11 & 19 & 2 & 15 & 24 & 67 & 26 & 9 & 3 & 5 & 55\\
+ & TKK & 30 & 23 &19 & 21 & 5 & 16 & 3 & 1 & 78 & 1 & 3 & 1 & 23 & 69 & 44 & 42 & 0 & 65 & 30 & 35 & 89 & 71 \\
+ & UoCTTI & 21 & 3 & 24 & 53 & 0 & 2 & 16 & 49 & 33 & 1 & 6 & 10 & 0 & 0 & 3 & 21 & 60 & 11 & 0 & 26 & 72 & 58 \\
 \hline
 Weakly & Zhang \etal \cite{zhang2013sparse} & 24 & $-$ & 48 & 20 & 26 & 25 & 3 & 7 & 23 & 13 & 38 & 19 & 15 & 39 & 17 & 18 & 25 & 47 & 9 & 41 & 17 & 33 \\
 Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19 & 25 & 29 & 26 & 19 & 12 & 18 & 4 & 28 & 28 \\
@@ -38,8 +64,9 @@ Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19
 This dataset was used for the PASCAL Visual Object Category segmentation contest 2007. It is especially challenging for the presence of background clutter, illumination effect and occlusions. It contains 5011 training images, and 4952 test images. Within the training set, for a subset of 422 images which are suitable for evaluation of the segmentation task, the object in these images are marked at pixel level, while the objects in the other images only have the bounding boxes indicating the location of the object and rough boundaries. And there are 20 foreground and 1 background classes in this dataset used for the task of classification, detection, and segmentation.
 
 
+\textbf{SIFT-flow} The SIFT Flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 33 unique semantic labels. It has 2688 images, 2488 used for training and 200 for testing. This dataset is very challenging for the reason that there are large number of classes in the dataset and $4.43$ classes per image. Besides, the frequence of classes is distributed with a pow-low.
 
-\textbf{SIFT-flow} The SIFT Flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 33 unique semantic labels. It has 2688 images, 2488 used for training and 200 for testing. This dataset mainly consists of outdoor images, which share high similarities in a certain category. So we can easily find the discriminative cues from the images. Average per-class accuracies of our approach and the other related work are reported in Table \ref{tab:ExpSIFTflow_Test}. Due to the well generalization of our approach, we outperform previous weakly-supervised methods and some fully-supervised methods. Farabet won a best performance with deep learning techniques in \cite{farabet2013learning}, which leads the state-of-the-art performance of fully-supervised methods.
+\textbf{Quantitative and Qualitative Results} Comparions of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpMSRC_test}, \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the MSRC dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotation are more efficiently utilized by our method. In the meantime, the results conducted by our framework is comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtain on VOC2007 and SIFT-flow dataset, which are more challenging than the previous one. Figures \ref{fig:MSRC}, \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the success and failure cases of three dataset respectively.
 
 \begin{table}[!h]
 \begin{center}
@@ -54,6 +81,7 @@ Tighe \etal \cite{Tighe2013Finding} & full & 39.2 \\
 Vezhnevets \etal \cite{vezhnevets2011weakly} & weak & 14 \\
 Vezhnevets \etal \cite{vezhnevets2012weakly} & weak & 21 \\
 Zhang \etal \cite{zhang2013sparse} & weak & 26 \\
+Zhang \etal \cite{zhang2013probabilistic} & weak & 27.7 \\
 Xu \etal \cite{xu2014tell} & weak & 27.9 \\
 Ours & weak & 30.2 \\
 \hline
@@ -63,5 +91,31 @@ Ours & weak & 30.2 \\
 \caption{Quantitative results on the SIFT-flow dataset \cite{liu2011nonparametric}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
 \label{tab:ExpSIFTflow_Test}
 \end{table}
+
+\subsection{Performance under the Noisy Condition}
+
+\begin{figure*}
+\begin{center}
+\fbox{\rule{0pt}{2in} \rule{.9\linewidth}{0pt}}
+\end{center}
+   \caption{Qualitative results on the MSRC data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\label{fig:MSRC}
+\end{figure*}
+
+\begin{figure*}
+\begin{center}
+\fbox{\rule{0pt}{2in} \rule{.9\linewidth}{0pt}}
+\end{center}
+   \caption{Qualitative results on the VOC-2007 data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\label{fig:VOC-2007}
+\end{figure*}
+
+\begin{figure*}
+\begin{center}
+\fbox{\rule{0pt}{2in} \rule{.9\linewidth}{0pt}}
+\end{center}
+   \caption{Qualitative results on the SIFT-flow data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\label{fig:SIFT-flow}
+\end{figure*}
 
 
