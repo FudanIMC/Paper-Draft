@@ -5,8 +5,6 @@ In particular, we extract a 4296 dimensional feature vector for each image by co
 As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 33 categories on the SiftFlow dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
 Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
 
-To verify both robustness and effectiveness o our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset.
-
 
 \subsection{Comparison with State of the Art}
 In this section, we compare our approach with the existing state of the art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on three real-world datasets: MSRC-21 \cite{shotton2006textonboost}, PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
@@ -93,6 +91,33 @@ Ours & weak & 30.2 \\
 \end{table}
 
 \subsection{Performance under the Noisy Condition}
+To verify both robustness and effectiveness of our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system, \eg Flickr. We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets. Then we perform a controlled test
+
+
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Methods & Supervision & Per-Class (\%)& \\
+\hline
+full framework & \\
+\hline
+w/o topic model &  \\
+\hline
+\end{tabular}
+\end{center}
+%\vspace{-3mm}
+\caption{Quantitative results on the SIFT-flow dataset \cite{liu2011nonparametric}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
+\label{tab:ExpNoise}
+\end{table}
+
+
+
+
+
+
+
 
 \begin{figure*}
 \begin{center}
