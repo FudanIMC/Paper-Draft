@@ -97,26 +97,31 @@ To verify both robustness and effectiveness of our method to noisy annotation co
 
 \begin{table}[!h]
 \begin{center}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-Methods & Supervision & Per-Class (\%)& \\
+Experiment Setting & exp1 & exp2 & exp3 & exp4 \\
 \hline
-full framework & \\
+Noisy Image (\%) & 23.2 & 33.8 & 53.4 & 77.8 \\
 \hline
-w/o topic model &  \\
+Noisy Labels per Image & 1.4 & 1.5 & 1.8 & 2.4 \\
+\hline
+Per-Class accuracy (\%) & 29.8 & 29.1 & 28.1 & 22.3 \\
 \hline
 \end{tabular}
 \end{center}
 %\vspace{-3mm}
-\caption{Quantitative results on the SIFT-flow dataset \cite{liu2011nonparametric}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
+\caption{Quantitative results  }
 \label{tab:ExpNoise}
 \end{table}
 
 
-
-
-
-
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=1\linewidth]{fig_noisylabel.pdf}
+\end{center}
+    \caption{}
+\label{fig:noisylabel}
+\end{figure}
 
 
 \begin{figure*}
