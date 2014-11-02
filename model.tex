@@ -1,21 +1,8 @@
 % !TEX root = 15cvpr.tex
 
 \section{The Proposed Model}
-We formulate the semantic segmentation problem as an Conditional Random Field (CRF) over image superpixels incorporating label correlation, appearance model and topic model in a unified model.
 
-More formally, suppose we have a set of weakly labeled images $\mathcal{I}=\{I_k\}_{k=1}^N$, where $N$ donates the total number of training images. Each image $I$ is associated with a vector of the $L$ binary variables $\boldsymbol{y} = (y_1,...,y_L)^{\rm T}$, \ie $y_i \in \{0,1\}$, where $y_i=1$ indicates that the $i$-th category is present in this image, and $0$ otherwise.
-
-We adopt a superpixel representation of each image $I$, where the superpixels are generated from multi-scale segmentation algorithm. Then we associate every superpixel $x_p$ ($p \in \mathcal{V}$) with a random variable $h_p \in \mathcal{C}$ to represent its semantic category. Here, $\mathcal{V} = \{1,...,M\}$ is a set of all the superpixels in image $I$ and $M$ indicates the total number of superpixels. Besides, $\mathcal{C} = \{1,...,L\}$ denotes the set of predefined labels.
-
-Our goal is to find the most suitable label for each pixel in an image and the adjacent pixels sharing the same semantic label are fused as the whole one. To tackle this problem, we build a Conditional Random Field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$. We connect each superpixel variables to its neighbors to encode a local smoothness constraint. Specifically, let $\mathcal{E}$ donate the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
-\begin{equation}
-    \label{eq:energyfunction}
-    \begin{aligned}
-        E(\boldsymbol{y},\boldsymbol{h},I&) = \sum_{i=1}^L{\psi_{G}(y_i,I)}
-                            + \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)}\\ &+ \sum_{p \in \mathcal{V}}{\psi_{L}(h_p,x_p)}+ \sum_{(p,q) \in \mathcal{E}}{\psi_{S}(h_p,h_q)}\\ &+ \psi_{C}(\boldsymbol{y},\boldsymbol{h})
-    \end{aligned}
-\end{equation}
-where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional constraints respectively, $\psi_R$ impose labels' correlation and co-occurrence, $\psi_S$ are the spatial context constraints for each superpixel, and $\psi_C$ ensure the consistency between global and regional labels. The details of each potential will be described in the following sections. The posterior distribution $P(\boldsymbol{y},\boldsymbol{h}|I)$ of the CRF can be written as $P(\boldsymbol{y},\boldsymbol{h}|I) = \frac{1}{Z(I)}\exp{\{-E(\boldsymbol{y},\boldsymbol{h},I)\}}$, where $Z(I)$ is the normalizing constant. Thus, the most probable labeling configuration $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star}$ of the random field can be defined as  $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star} = \arg \min_{\boldsymbol{y},\boldsymbol{h}} E(\boldsymbol{y},\boldsymbol{h},I)$.
+We formulate the semantic segmentation problem as an Conditional Random Field (CRF) over image superpixels incorporating label correlation, appearance model and topic model ... in a unified model. {\textcolor{red}{TBD:same as main contribution 2}}
 
 \begin{figure*}[!htb]
     \begin{center}
@@ -25,7 +12,23 @@ where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional 
     \label{fig:graphmodel}
 \end{figure*}
 
-\subsection{Global}
+More formally, suppose we have a set of weakly labeled images $\mathcal{I}=\{I_k\}_{k=1}^N$, where $N$ donates the total number of training images. Each image $I$ is associated with a vector of the $L$ binary variables $\boldsymbol{y} = (y_1,...,y_L)^{\rm T}$, \ie $y_i \in \{0,1\}$, where $y_i=1$ indicates that the $i$-th category is present in this image, and $0$ otherwise.
+
+We adopt a superpixel representation of each image $I$, where the superpixels are generated from multi-scale segmentation algorithm. Then we associate every superpixel $x_p$ ($p \in \mathcal{V}$) with a random variable $h_p \in \mathcal{C}$ to represent its semantic category. Here, $\mathcal{V} = \{1,...,M\}$ is a set of all the superpixels in image $I$ and $M$ indicates the total number of superpixels. Besides, $\mathcal{C} = \{1,...,L\}$ denotes the set of predefined labels.
+
+Our goal is to find the accurate semantic label for each pixel in an image and the adjacent pixels sharing the same semantic label are fused as the whole one. To tackle this problem, we build a Conditional Random Field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$. We connect each superpixel variables to its neighbors to encode a local smoothness constraint. Specifically, let $\mathcal{E}$ donate the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
+\begin{equation}
+    \label{eq:energyfunction}
+    \begin{aligned}
+        E(\boldsymbol{y},\boldsymbol{h},I&) = \sum_{i=1}^L{\psi_{G}(y_i,I)}
+                            + \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)}\\ &+ \sum_{p \in \mathcal{V}}{\psi_{L}(h_p,x_p)}+ \sum_{(p,q) \in \mathcal{E}}{\psi_{S}(h_p,h_q)}\\ &+ \psi_{C}(\boldsymbol{y},\boldsymbol{h})
+    \end{aligned}
+\end{equation}
+where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional constraints respectively, $\psi_R$ impose labels' correlation and co-occurrence, $\psi_S$ are the spatial context constraints for each superpixel, and $\psi_C$ ensure the consistency between global and regional labels. The details of each potential will be described in the following sections. The posterior distribution $P(\boldsymbol{y},\boldsymbol{h}|I)$ of the CRF can be written as $P(\boldsymbol{y},\boldsymbol{h}|I) = \frac{1}{Z(I)}\exp{\{-E(\boldsymbol{y},\boldsymbol{h},I)\}}$, where $Z(I)$ is the normalizing constant. Thus, the most probable labeling configuration $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star}$ of the random field can be defined as  $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star} = \arg \min_{\boldsymbol{y},\boldsymbol{h}} E(\boldsymbol{y},\boldsymbol{h},I)$. In the following subsections, we explain the details of each term, and a graphical representation of the framework is shown in Figure \ref{fig:graphmodel}
+
+\subsection{Image-level}
+Multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). Different from the fully supervised semantic segmentation, the pixel-level annotation is not given. It is challenging because large appearance variations in cluttered backgrounds. In addition, noisy image annotation,
+
 We utilize a label classifier which leverages convolutional Neural Network(CNN) in order to predict missing label at test time. \cite{agrawal2014analyzing} shows that fine-tuning a discriminatingly pre-trained network is very effective in terms of task performance. Unfortunately, the appearance model cannot be trained or fine-tuned directly due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time. Moreover, the noised label
 
 ...
@@ -41,8 +44,6 @@ Just by concatenating the appearance feature $d_j$ and topic distribution $P(w_i
 \end{equation}
 where $f_{i}(I)$ is an SVM score function associated label $i$.
 
-Multiple labels do not appear independently but occur correlatively and usually interact with each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). Different from the supervised semantic segmentation, the pixel-level label is not given. It is challenging because large appearance variations in cluttered backgrounds. In addition, noisy image annotation,
-
 Due to the unknown label of superpixels, learning these latent information is an unsupervised learning problem. The context contain some useful latent information which can be learned for semantic label noise reduction. The inter-label correlation matrix is constructed to characterize the interdependency between semantic concepts and helps to model the inter-label co-occurrence among feature space of superpixels. Here we consider two aspect to construct inter-label matrix.
 
 Inspired by \cite{russakovsky2014imagenet}
@@ -55,7 +56,7 @@ The key idea is to analyze the change in the classification scores when artifici
 \end{equation}
 where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative region between category $i$ and $j$, $Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))$ measures the label co-occurrence based on statistics and $I(\cdot)$ is the indicator function.
 
-\subsection{Local}
+\subsection{Superpixel-Level}
 Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels.
 Formally, we encode the unary potential of regions as follows:
 \begin{equation}
