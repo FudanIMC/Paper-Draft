@@ -2,22 +2,11 @@
 \section{Introduction}
 
 \begin{figure}[t]
-<<<<<<< HEAD
-	\begin{center}
-   %\fbox{\rule{0pt}{2in} \rule{0.9\linewidth}{0pt}}
-   		\includegraphics[width=0.95\linewidth]{noisyparsing.pdf}
-	\end{center}
-   \caption{Example of caption.  It is set in Roman so that mathematics
-   (always set in Roman: $B \sin A = A \sin B$) may be included without an
-   ugly clash.}
-\label{fig:noisyparsing}
-=======
 \begin{center}
     \includegraphics[width=1\linewidth]{noisyparsing.pdf}
 \end{center}
     \caption{Given a training set of real-world images and its associated labels where label may be precise (green), incorrect (red) or missing (blue), we learn a model that segments and recognizes visual concept in new images. Best viewed in color.}
-\label{fig:noisylabel}
->>>>>>> cf0ff95865e67670e9c4bf0288e4e1967828d7b4
+\label{fig:noisyparsing}
 \end{figure}
 
 Semantic segmentation, an attractive but challenging task in computer vision community, is an efficient way to handle an explosive growth in the volume of image in real world. Aiming to assign each pixel to one of predefined semantic categories, machine learning methods are used to learn classifier from labeled training images. Most state-of-the-art approaches heavily relies on extensive guidance in training, using a sufficiently huge amount of annotated samples, while the truth is only a subset of large-scale image dataset can be manual labeled, due to its time-consuming and labor-intensive. Recent works have begun to address the semantic segmentation problem under the weakly supervised settings, where each training image is annotated by image-level labels specifying which classes are present but no pixel-level annotation is given \cite{verbeek2007region,vezhnevets2010towards,vezhnevets2011weakly,vezhnevets2012weakly,xu2014tell,zhang2013sparse,zhang2013probabilistic}. With the prevalence of photo sharing websites and collaborative image tagging system, such as Flickr, which host vast of digital images with user provided tags, such weakly supervised methods are more flexible in real-world applications since the image-level annotated images are much easier to obtain.
