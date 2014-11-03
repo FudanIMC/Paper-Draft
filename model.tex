@@ -26,12 +26,11 @@ Our goal is to find the accurate semantic label for each pixel in an image and t
 \end{equation}
 where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional constraints respectively, $\psi_R$ impose labels' correlation and co-occurrence, $\psi_S$ are the spatial context constraints for each superpixel, and $\psi_C$ ensure the consistency between global and regional labels. The details of each potential will be described in the following sections. The posterior distribution $P(\boldsymbol{y},\boldsymbol{h}|I)$ of the CRF can be written as $P(\boldsymbol{y},\boldsymbol{h}|I) = \frac{1}{Z(I)}\exp{\{-E(\boldsymbol{y},\boldsymbol{h},I)\}}$, where $Z(I)$ is the normalizing constant. Thus, the most probable labeling configuration $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star}$ of the random field can be defined as  $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star} = \arg \min_{\boldsymbol{y},\boldsymbol{h}} E(\boldsymbol{y},\boldsymbol{h},I)$. In the following subsections, we explain the details of each term, and a graphical representation of the framework is shown in Figure \ref{fig:graphmodel}
 
+\if
+ We utilize a label classifier which leverages convolutional Neural Network(CNN) for noisy label refinement.\cite{agrawal2014analyzing} shows that fine-tuning a discriminatingly pre-trained network is very effective in terms of task performance. Unfortunately, the appearance model cannot be trained or fine-tuned directly due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time.
+\fi
 \subsection{Image-level}
-Multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). Different from the fully supervised semantic segmentation, the pixel-level annotation is not given. It is challenging because large appearance variations in cluttered backgrounds. In addition, noisy image annotation,
-
-We utilize a label classifier which leverages convolutional Neural Network(CNN) in order to predict missing label at test time. \cite{agrawal2014analyzing} shows that fine-tuning a discriminatingly pre-trained network is very effective in terms of task performance. Unfortunately, the appearance model cannot be trained or fine-tuned directly due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time. Moreover, the noised label
-
-...
+Multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
 
 We model each images as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA), which can recover visual models of semantic labels  in a completely unsupervised manner. Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. Here we regard fully-connected layer as input when we consider each neuron as a visual word and each image as a document. We denote each visual word (neuron) as $w_i$, then the occurrence frequency of image $j$ on $w_i$ is the i-th dimension of $d_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,d_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
 \begin{equation}
@@ -57,7 +56,7 @@ The key idea is to analyze the change in the classification scores when artifici
 where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative region between category $i$ and $j$, $Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))$ measures the label co-occurrence based on statistics and $I(\cdot)$ is the indicator function.
 
 \subsection{Superpixel-Level}
-Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels.
+Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels. {\textcolor{red}{general description of superpixel unary}}
 Formally, we encode the unary potential of regions as follows:
 \begin{equation}
     \begin{aligned}
@@ -88,7 +87,7 @@ And the intra-level energy cost $\phi_{intra}$ is defined as:
 \begin{equation}
     \phi_{intra}(h_p,h_q) = Sim(x_p,x_q) \cdot (1-R(h_p,h_q))
 \end{equation}
-where $Sim(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel $x_p$ and $x_q$, $R(h_p,h_q) \in [0,1]$ is a learnt correlation between label $h_p$ and $h_q$ (see Section \ref{sec:correlation} for details). Hence, we pay a high cost for the similar superpixels if they were assigned different labels and for the superpixels which were assigned an irrelevant label to the context.
+where $Sim(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel $x_p$ and $x_q$, $R(h_p,h_q) \in [0,1]$ is a learnt correlation between label $h_p$ and $h_q$ {\textcolor{red}{TBD: explanation and details}}. Hence, we pay a high cost for the similar superpixels if they were assigned different labels and for the superpixels which were assigned an irrelevant label to the context.
 
 \subsection{Label Consistency}
 We require that the superpixel labels be consistent with the image labels: if any superpixel $x_p$ takes the label $i$, then image label indicator $y_i=1$; otherwise $y_i=0$. Such constraints can be encode by the following potential:
