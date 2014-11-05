@@ -1,0 +1,142 @@
+% !TEX root = 15cvpr.tex
+
+\section{The Proposed Model}
+
+We formulate the semantic segmentation problem as an Conditional Random Field (CRF) over image superpixels incorporating label correlation, appearance model and topic model ... in a unified model. {\textcolor{red}{TBD:same as main contribution 2}}
+
+\begin{figure*}[!htb]
+    \begin{center}
+        \includegraphics[width=0.95\linewidth]{graphmodel.pdf}
+    \end{center}
+    \caption{Example of a short caption, which should be centered.}
+    \label{fig:graphmodel}
+\end{figure*}
+
+More formally, suppose we have a set of weakly labeled images $\mathcal{I}=\{I_k\}_{k=1}^N$, where $N$ donates the total number of training images. Each image $I$ is associated with a vector of the $L$ binary variables $\boldsymbol{y} = (y_1,...,y_L)^{\rm T}$, \ie $y_i \in \{0,1\}$, where $y_i=1$ indicates that the $i$-th category is present in this image, and $0$ otherwise.
+
+We adopt a superpixel representation of each image $I$, where the superpixels are generated from multi-scale segmentation algorithm. Then we associate every superpixel $x_p$ ($p \in \mathcal{V}$) with a random variable $h_p \in \mathcal{C}$ to represent its semantic category. Here, $\mathcal{V} = \{1,...,M\}$ is a set of all the superpixels in image $I$ and $M$ indicates the total number of superpixels. Besides, $\mathcal{C} = \{1,...,L\}$ denotes the set of predefined labels.
+
+Our goal is to find the accurate semantic label for each pixel in an image and the adjacent pixels sharing the same semantic label are fused as the whole one. To tackle this problem, we build a Conditional Random Field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$. We connect each superpixel variables to its neighbors to encode a local smoothness constraint. Specifically, let $\mathcal{E}$ donate the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
+\begin{equation}
+    \label{eq:energyfunction}
+    \begin{aligned}
+        E(\boldsymbol{y},\boldsymbol{h},I&) = \sum_{i=1}^L{\psi_{G}(y_i,I)}
+                            + \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)}\\ &+ \sum_{p \in \mathcal{V}}{\psi_{L}(h_p,x_p)}+ \sum_{(p,q) \in \mathcal{E}}{\psi_{S}(h_p,h_q)}\\ &+ \psi_{C}(\boldsymbol{y},\boldsymbol{h})
+    \end{aligned}
+\end{equation}
+where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional constraints respectively, $\psi_R$ impose labels' correlation and co-occurrence, $\psi_S$ are the spatial context constraints for each superpixel, and $\psi_C$ ensure the consistency between global and regional labels. The details of each potential will be described in the following sections. The posterior distribution $P(\boldsymbol{y},\boldsymbol{h}|I)$ of the CRF can be written as $P(\boldsymbol{y},\boldsymbol{h}|I) = \frac{1}{Z(I)}\exp{\{-E(\boldsymbol{y},\boldsymbol{h},I)\}}$, where $Z(I)$ is the normalizing constant. Thus, the most probable labeling configuration $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star}$ of the random field can be defined as  $\boldsymbol{y}^{\star},\boldsymbol{h}^{\star} = \arg \min_{\boldsymbol{y},\boldsymbol{h}} E(\boldsymbol{y},\boldsymbol{h},I)$. In the following subsections, we explain the details of each term, and a graphical representation of the framework is shown in Figure \ref{fig:graphmodel}
+
+\if
+ We utilize a label classifier which leverages convolutional Neural Network(CNN) for noisy label refinement.\cite{agrawal2014analyzing} shows that fine-tuning a discriminatingly pre-trained network is very effective in terms of task performance. Unfortunately, the appearance model cannot be trained or fine-tuned directly due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time.
+\fi
+\subsection{Image-level}
+Multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
+
+We model each images as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA), which can recover visual models of semantic labels  in a completely unsupervised manner. Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. Here we regard fully-connected layer as input when we consider each neuron as a visual word and each image as a document. We denote each visual word (neuron) as $w_i$, then the occurrence frequency of image $j$ on $w_i$ is the i-th dimension of $d_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,d_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
+\begin{equation}
+  P(w_i|d_j) = \sum_{k=1}^K{P(t_k|d_j)P(w_i|t_k)}
+\end{equation}
+where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$.
+Just by concatenating the appearance feature $d_j$ and topic distribution $P(w_i|d_j)$, we formulate image's global feature as $I$. Then, we define the label presence potential $\psi_{G}$ as follow:
+\begin{equation}
+    \psi_{G}(y_i,I) = -\log f_{i}(I)
+    \label{eq:global}
+\end{equation}
+where $f_{i}(I)$ is an SVM score function associated label $i$.
+
+Due to the unknown label of superpixels, learning these latent information is an unsupervised learning problem. The context contain some useful latent information which can be learned for semantic label noise reduction. The inter-label correlation matrix is constructed to characterize the interdependency between semantic concepts and helps to model the inter-label co-occurrence among feature space of superpixels. Here we consider two aspect to construct inter-label matrix.
+
+Inspired by \cite{russakovsky2014imagenet}
+
+On the one hand, we
+
+The key idea is to analyze the change in the classification scores when artificially blackout different regions of the image. We observe that blackout a region that contains an discriminative region causes a massive confusion in cluster condition. This produces for each image a set of sub-windows from segmentation that are deemed likely to contain the discriminative region for specific semantic label. After localizing discriminative region in cluster condition, we can construct the inter-label correlation matrix by using both the available image-level label and region-level overlap. More concretely, we define the label correlation potential $\psi_R$ as follow:
+\begin{equation}
+    \psi_{R}(y_i,y_j) = R(i,j) \cdot Cooc(i,j) \cdot I(y_i=y_j)
+\end{equation}
+where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative region between category $i$ and $j$, $Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))$ measures the label co-occurrence based on statistics and $I(\cdot)$ is the indicator function.
+
+\subsection{Superpixel-Level}
+Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels. {\textcolor{red}{general description of superpixel unary}}
+Formally, we encode the unary potential of regions as follows:
+\begin{equation}
+    \begin{aligned}
+        \psi_{L}(h_p,x_p) = &- \log \big\{ w_1\phi_a(h_p,a_p,\theta_a) \\
+        &+ w_2\phi_t(h_p,t_p,\theta_t) \big\}
+    \end{aligned}
+    \label{eq:local}
+\end{equation}
+where $a_p, t_p$ are the appearance and topic feature vectors extracted from the superpixels, $\theta_a, \theta_t$ donate the parameters with respect to appearance model and topic model, $\{w_i\}|_{i=1}^2$ are the weighting coefficients for the unary terms. We define the appearance model $\phi_a(h_p,a_p,\theta_a) = f_{h_p}(a_p,\theta_a)$ and topic model $\phi_t(h_p,t_p,\theta_t) = g_{h_p}(t_p,\theta_t)$ measuring how well the local appearance $a_p$ and topic $t_p$ matches the semantic label $h_p$.
+
+Considering the weakness of the single choice of segmentation, we utilize multiple segmentations to disambiguate low-level segmentation cues. We divide the superpixels into different quantization level according to the particular segmentation scale we chose. Then we include the inter-level energy cost $\phi_{inter}$ to investigate the most suitable segmentation scale each object belongs to. Besides, we integrate the intra-level energy cost $\phi_{intra}$, which could discourage superpixel-level noise, to smooth the object boundaries. Let the two neighboring superpixels (either inter-level or intra-level) be $x_p$ and $x_q$ (\ie, $(p,q) \in \mathcal{E}$), we define the pairwise potential $\psi_S$ as follows,
+\begin{equation}
+    \psi_{S}(h_p,h_q) =
+    \begin{cases}
+        \phi_{inter}(h_p,h_q) &\mbox{ if } | l_p - l_q | = 1,
+        \\
+        \phi_{intra}(h_p,h_q) &\mbox{ if } l_p = l_q,
+        \\
+        0 &\mbox{ otherwise }
+    \end{cases}
+\end{equation}
+where $l_p$ indicates the quantization level that the superpixel $x_p$ belongs to.
+The inter-level energy cost $\phi_{inter}$ is defined as:
+\begin{equation}
+    \phi_{inter}(h_p,h_q) = \gamma \cdot O(x_p,x_q) \cdot I(h_p \neq h_q)
+\end{equation}
+where $O(x_p,x_q)$ refers to the intersection (overlapping area) of two superpixels, $I(\cdot)$ is the indicator function and $\gamma$ is the weighting coefficient. This formulation is based on the higher order constraints \cite{kohli2009robust,ladicky2009associative} that superpixels lying within the same clique are more likely to take the same label.
+And the intra-level energy cost $\phi_{intra}$ is defined as:
+\begin{equation}
+    \phi_{intra}(h_p,h_q) = Sim(x_p,x_q) \cdot (1-R(h_p,h_q))
+\end{equation}
+where $Sim(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel $x_p$ and $x_q$, $R(h_p,h_q) \in [0,1]$ is a learnt correlation between label $h_p$ and $h_q$ {\textcolor{red}{TBD: explanation and details}}. Hence, we pay a high cost for the similar superpixels if they were assigned different labels and for the superpixels which were assigned an irrelevant label to the context.
+
+\subsection{Label Consistency}
+We require that the superpixel labels be consistent with the image labels: if any superpixel $x_p$ takes the label $i$, then image label indicator $y_i=1$; otherwise $y_i=0$. Such constraints can be encode by the following potential:
+\begin{equation}
+    \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
+    C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
+\end{equation}
+where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels.
+
+\subsection{Learning Parameters}
+Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potential by median of maximum per unary term contribution of all the pairwise potentials in order to make them comparable to unary potentials. After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
+
+\subsection{Joint Inference with Alternating Procedure}
+\label{sec:inference}
+Given an image $I$, our task is to assign each pixel a predefined semantic label. We achieve this as an energy minimization problem \eqref{eq:energyfunction}, in which our inference algorithm searches for optimal configuration of image-level label $\boldsymbol{y}^\star$ and superpixel-level label $\boldsymbol{h}^\star$. To efficiently minimize the energy function, we solve it in the following two alternating optimization steps:
+\begin{equation}
+    \label{eq:binaryCRF}
+    \begin{aligned}
+        \boldsymbol{y}^* = \arg\min_{\boldsymbol{y}} &\sum_{i} {\psi_{G}(y_i,I)} + \frac{1}{2} \psi_{C}(\boldsymbol{y},\boldsymbol{h}^*) \\ &+ \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)},
+    \end{aligned}
+\end{equation}
+\begin{equation}
+    \label{eq:multiclassCRF}
+    \begin{aligned}
+        \boldsymbol{h}^* = \arg\min_{\boldsymbol{h}} &\sum_{p} {\psi_{L}(h_p,x_p)} + \frac{1}{2} \psi_{C}(\boldsymbol{y}^*,\boldsymbol{h}) \\ &+ \sum_{(p,q) \in \mathcal{E}}{\psi_{S}(h_p,h_q)}.
+    \end{aligned}
+\end{equation}
+As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:binaryCRF} has an explicit solution which utilizes min-cut/max-flow algorithms (\eg the Dinic algorithm \cite{dinits1970algorithm}) to obtain the global optimal label configuration. And the second subproblem in Equation \eqref{eq:multiclassCRF} reduces to an energy minimization for a multi-class CRF. Although finding the global optimum for this energy function has been proved to be a NP-hard problem, there are various approximate methods for fast inference, such as approximate \textit{maximum a posteriori} (MAP) methods (\eg graph-cuts \cite{boykov2001fast}). In this paper, we adopt \textit{move making} approach \cite{boykov2001fast} that finds the optimal $\alpha$-expansion \cite{boykov2001fast,kolmogorov2004energy} by converting the problems into binary labeling  problems which can be solved efficiently using graph cuts techniques. The energy obtain by $\alpha$-expansion has been proved to be within a known factor of the global optimum \cite{boykov2001fast}. Considering the two alternate optimization steps together, we summarize our XXXX in Algorithm \ref{alg:energy}.
+
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm
+\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm
+
+\begin{algorithm}
+\caption{Energy minimization Inference}
+\label{alg:energy}
+\begin{algorithmic}[1]
+    \Require
+    a test image $I$ and its representation of superpixels $\{x_p\}$
+    \Ensure
+    the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$
+    \State Construct the graphical model as shown in Figure \ref{fig:graphmodel}.
+    \State Initialize $\boldsymbol{y}$ and $\boldsymbol{h}$ with the highest unary potential according to Equation \eqref{eq:global} and \eqref{eq:local}, respectively.
+    \For{ iteration $t=1$ to $T$ }
+        \State fix $\boldsymbol{y}$, optimize $\boldsymbol{h}$ via Equation \eqref{eq:multiclassCRF}
+        \State fix $\boldsymbol{h}$, refine $\boldsymbol{y}$ via Equation \eqref{eq:binaryCRF}
+    \EndFor
+    \State Return the final configuration $\boldsymbol{y}$ and $\boldsymbol{h}$.
+\end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,27 @@
+
+\begin{table*}[htp] \small
+\begin{center}
+\begin{tabular}{l|l|c| p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm}}
+
+& Methods & \rotatebox{90}{average} & \rotatebox{90}{building} & \rotatebox{90}{grass} & \rotatebox{90}{tree} & \rotatebox{90}{cow} & \rotatebox{90}{sheep} & \rotatebox{90}{sky} & \rotatebox{90}{aeroplane} & \rotatebox{90}{water} & \rotatebox{90}{face} & \rotatebox{90}{car} & \rotatebox{90}{bicycle} & \rotatebox{90}{flower} & \rotatebox{90}{sign} & \rotatebox{90}{bird} & \rotatebox{90}{book} & \rotatebox{90}{chair} & \rotatebox{90}{road} & \rotatebox{90}{cat} & \rotatebox{90}{dog} & \rotatebox{90}{body} & \rotatebox{90}{boat} \\
+\hline
+ & Shotton \etal \cite{shotton2006textonboost} & 58 & 62 & 98 & 86 & 58 & 50 &83 & 60 & 53 & 74 & 63 & 75 & 63 & 35 & 19 & 92 & 15 & 86 & 54 & 19 & 62 & 7 \\
+ Fully & Yang \etal \cite{yang2007multiple} & 62 & 63 & 98 & 90 & 66 & 54 & 86 & 63 & 71 & 83 & 71 & 80 & 71 & 38 & 23 & 88 & 23 & 88 & 33 & 34 & 43 & 32 \\
+ Supervised& Shotton \etal \cite{shotton2008semantic} & 67 & 49 & 88 & 79 & 97 & 97 & 78 & 82 & 54 & 87 & 74 & 72 & 74 & 36 & 24 & 93 & 51 & 78 & 75 & 35 & 66 & 18 \\
+ & Ladicky \etal \cite{ladicky2009associative} & 75 & 80 & 96 & 86 & 74 & 87 & 99 & 74 & 87 & 86 & 87 & 82 & 97 & 95 & 30 & 86 & 31 & 95 & 51 & 69 & 66 & 9 \\
+ & Lucchi \etal \cite{lucchi2012structured} & 76 & 59 & 90 & 92 & 82 & 83 & 94 & 91 & 80 & 85 &88 & 96 & 89 & 73 & 48 & 96 & 62 & 81 & 87 & 33 & 44 & 30 \\
+\hline
+& Verbeek and Triggs \cite{verbeek2007region} & 50 & 45 & 64 & 71 & 75 & 74 & 86 & 81 & 47 & 1 & 73 & 55 & 88 & 6 & 6 & 63 & 18 & 80 & 27 & 26 & 55 & 8 \\
+Weakly & Vezhnevets \etal \cite{vezhnevets2011weakly} & 67 & 5 & 80 & 58 & 81 & 97 & 87 & 99 & 63 & 91 & 86 & 98 & 82 & 67 & 46 & 59 & 45 & 66 & 64 & 45 & 33 & 54 \\
+Supervised & Zhang \etal \cite{zhang2013sparse} & 69 & 63 & 93 & 92 & 62 & 75 & 78 & 79 & 64 & 95 & 79 & 93 & 62 & 76 & 32 & 95 & 48 & 83 & 63 & 38 & 68 & 15 \\
+& Ours & \\
+\end{tabular}
+\caption{Quantitative results on the MSRC-21 dataset \cite{shotton2006textonboost}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
+\label{tab:ExpMSRC_test}
+\end{center}
+\vskip -0.1in
+\end{table*}
+
+
+\textbf{MSRC-21}
+The MSRC segmentation dataset contains 591 images of resolution 320x213 pixels, accompanied with a hand labeled object segmentation of 21 categories \cite{shotton2006textonboost}. This dataset has been widely adopted for semantic segmentation. Pixels on the boundaries of objects are usually labeled as background and not taken into consideration in these segmentations. For fair comparison, we use standard dataset split (276 images for training and 256 images for testing) provided by \cite{shotton2006textonboost}.
