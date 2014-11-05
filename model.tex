@@ -120,10 +120,23 @@ Given an image $I$, our task is to assign each pixel a predefined semantic label
 As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:binaryCRF} has an explicit solution which utilizes min-cut/max-flow algorithms (\eg the Dinic algorithm \cite{dinits1970algorithm}) to obtain the global optimal label configuration. And the second subproblem in Equation \eqref{eq:multiclassCRF} reduces to an energy minimization for a multi-class CRF. Although finding the global optimum for this energy function has been proved to be a NP-hard problem, there are various approximate methods for fast inference, such as approximate \textit{maximum a posteriori} (MAP) methods (\eg graph-cuts \cite{boykov2001fast}). In this paper, we adopt \textit{move making} approach \cite{boykov2001fast} that finds the optimal $\alpha$-expansion \cite{boykov2001fast,kolmogorov2004energy} by converting the problems into binary labeling  problems which can be solved efficiently using graph cuts techniques. The energy obtain by $\alpha$-expansion has been proved to be within a known factor of the global optimum \cite{boykov2001fast}. Considering the two alternate optimization steps together, we summarize our XXXX in Algorithm \ref{alg:energy}.
 
 
-\begin{algorithm}[htb]
-    \caption{ Energy minimization }
-    \label{alg:energy}
-    \begin{algorithmic}[1]
-        \State 123
-    \end{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm
+\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm
+
+\begin{algorithm}
+\caption{Energy minimization Inference}
+\label{alg:energy}
+\begin{algorithmic}[1]
+    \Require
+    a test image $I$ and its representation of superpixels $\{x_p\}$
+    \Ensure
+    the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$
+    \State Construct the graphical model as shown in Figure \ref{fig:graphmodel}.
+    \State Initialize $\boldsymbol{y}$ and $\boldsymbol{h}$ with the highest unary potential according to Equation \eqref{eq:global} and \eqref{eq:local}, respectively.
+    \For{ iteration $t=1$ to $T$ }
+        \State fix $\boldsymbol{y}$, optimize $\boldsymbol{h}$ via Equation \eqref{eq:multiclassCRF}
+        \State fix $\boldsymbol{h}$, refine $\boldsymbol{y}$ via Equation \eqref{eq:binaryCRF}
+    \EndFor
+    \State Return the final configuration $\boldsymbol{y}$ and $\boldsymbol{h}$.
+\end{algorithmic}
 \end{algorithm}
