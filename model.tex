@@ -34,6 +34,7 @@ where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$.
 Just by concatenating the appearance feature $d_j$ and topic distribution $P(w_i|d_j)$, we formulate image's global feature as $I$. Then, we define the label presence potential $\psi_{G}$ as follow:
 \begin{equation}
     \psi_{G}(y_i,I) = -\log f_{i}(I)
+    \label{eq:global}
 \end{equation}
 where $f_{i}(I)$ is an SVM score function associated label $i$.
 
@@ -57,6 +58,7 @@ Formally, we encode the unary potential of regions as follows:
         \psi_{L}(h_p,x_p) = &- \log \big\{ w_1\phi_a(h_p,a_p,\theta_a) \\
         &+ w_2\phi_t(h_p,t_p,\theta_t) \big\}
     \end{aligned}
+    \label{eq:local}
 \end{equation}
 where $a_p, t_p$ are the appearance and topic feature vectors extracted from the superpixels, $\theta_a, \theta_t$ donate the parameters with respect to appearance model and topic model, $\{w_i\}|_{i=1}^2$ are the weighting coefficients for the unary terms. We define the appearance model $\phi_a(h_p,a_p,\theta_a) = f_{h_p}(a_p,\theta_a)$ and topic model $\phi_t(h_p,t_p,\theta_t) = g_{h_p}(t_p,\theta_t)$ measuring how well the local appearance $a_p$ and topic $t_p$ matches the semantic label $h_p$.
 
