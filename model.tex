@@ -45,7 +45,7 @@ where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. For
 where $f_{i}(I)$ is an multi-label classifier score function associated label $i$.
 
 Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels. Formally, we encode the unary potential of regions as follows:
-\begin{equaton}
+\begin{equation}
     \begin{aligned}
         \psi_{L}(h_p,x_p) = &- \log \big\{ w_1\phi_a(h_p,a_p,\theta_a) \\
         &+ w_2\phi_t(h_p,t_p,\theta_t) \big\}

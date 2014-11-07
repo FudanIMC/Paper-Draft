@@ -2,12 +2,25 @@
 \section{Experiments}
 
 \subsection{Experimental Setup}
-For a given dataset, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to achieve multi-scale hierarchical segmentations. We 
+
+In real world applications, multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). In this section, {\textcolor{red}{we infer semantic labels by capturing correlations among multiple labels and the interconnection between the low-level visual features and the high-level semantic concepts.}}
+
+Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
+
+For a given dataset, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale}
 
 In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network\cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
 
 As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 33 categories on the SiftFlow dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
 Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
+
+\begin{figure}[!htb]
+    \begin{center}
+        \includegraphics[width=1\linewidth]{fig_correlations.pdf}
+    \end{center}
+    \caption{Example of a short caption, which should be centered.}
+    \label{fig:correlations}
+\end{figure}
 
 \subsection{Comparison with State of the Art}
 In this section, we compare our approach with the existing state of the art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
@@ -66,7 +79,7 @@ Ours & weak & 30.2 \\
 \end{table}
 
 \subsection{Performance under the Noisy Condition}
-To verify both robustness and effectiveness of our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system, \eg Flickr. We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets. Then we perform a controlled test on these noisy dataset. As shown in Table \ref{tab:ExpNoise}, our approach is robust under the noisy condition. 
+To verify both robustness and effectiveness of our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system, \eg Flickr. We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets. Then we perform a controlled test on these noisy dataset. As shown in Table \ref{tab:ExpNoise}, our approach is robust under the noisy condition.
 
 
 
@@ -94,7 +107,7 @@ Per-Class accuracy (\%) & 29.8 & 29.1 & 28.1 & 22.3 \\
 \begin{center}
     \includegraphics[width=1\linewidth]{fig_noisylabel.pdf}
 \end{center}
-\caption{}
+    \caption{}
 \label{fig:noisyexp}
 \end{figure}
 
