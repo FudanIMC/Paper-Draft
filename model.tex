@@ -22,6 +22,14 @@ where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional 
  We utilize a label classifier which leverages convolutional Neural Network(CNN) for noisy label refinement.\cite{agrawal2014analyzing} shows that fine-tuning a discriminatingly pre-trained network is very effective in terms of task performance. Unfortunately, the appearance model cannot be trained or fine-tuned directly due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time.
 \fi
 
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=1\linewidth]{fig_framework.pdf}
+    \end{center}
+    \caption{Example of a short caption, which should be centered.}
+    \label{fig:framework}
+\end{figure}
+
 \subsection{{\textcolor{red}{Untitled}}}
 We model input image by two aspects: On the one hand, we utilize convolutional neural network(CNN) to represent the appearance model of each image, especially the first fully-connected layer containing 4096 neurons of a 19-layers model\cite{simonyan2014very}. On the other hand, for topic model, we model the CNN representation as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA)\cite{sivic2005discovering}, which can recover visual models of semantic labels in a completely unsupervised manner.
 
@@ -37,7 +45,7 @@ where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. For
 where $f_{i}(I)$ is an multi-label classifier score function associated label $i$.
 
 Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels. Formally, we encode the unary potential of regions as follows:
-\begin{equation}
+\begin{equaton}
     \begin{aligned}
         \psi_{L}(h_p,x_p) = &- \log \big\{ w_1\phi_a(h_p,a_p,\theta_a) \\
         &+ w_2\phi_t(h_p,t_p,\theta_t) \big\}
@@ -91,9 +99,6 @@ We require that the superpixel labels be consistent with the image labels: if an
 \end{equation}
 where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels.
 
-\subsection{Learning Parameters}
-Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potential by median of maximum per unary term contribution of all the pairwise potentials in order to make them comparable to unary potentials. After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
-
 \begin{figure*}[!htb]
     \begin{center}
         \includegraphics[width=0.95\linewidth]{graphmodel.pdf}
@@ -101,6 +106,9 @@ Due to the fact that pixel-level labels are not available during the training st
     \caption{Example of a short caption, which should be centered.}
     \label{fig:graphmodel}
 \end{figure*}
+
+\subsection{Learning Parameters}
+Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potential by median of maximum per unary term contribution of all the pairwise potentials in order to make them comparable to unary potentials. After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
 
 \subsection{Joint Inference with Alternating Procedure}
 \label{sec:inference}
