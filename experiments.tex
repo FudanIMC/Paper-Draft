@@ -1,18 +1,20 @@
 % !TEX root = 15cvpr.tex
 \section{Experiments}
 
-\subsection{Experimental Setup}
-
 In real world applications, multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). In this section, {\textcolor{red}{we infer semantic labels by capturing correlations among multiple labels and the interconnection between the low-level visual features and the high-level semantic concepts.}}
 
 Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
 
-For a given dataset, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale}
-
-In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network\cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
-
-As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 33 categories on the SiftFlow dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
+As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 20 categories on the PASCAL VOC 2007 dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
 Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
+
+\subsection{Experimental Setup}
+\if
+In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
+\fi
+
+For a given dataset, we extract a 4296 dimensional global feature vector for each image by concatenating appearance feature and latent semantic concept distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as the latent semantic concept distribution.
+Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the superpixel respentation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
 
 \begin{figure}[!htb]
     \begin{center}
@@ -54,7 +56,7 @@ This dataset was used for the PASCAL Visual Object Category segmentation contest
 
 \textbf{Quantitative and Qualitative Results} Comparisons of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the VOC2007 dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotation are more efficiently utilized by our method. In the meantime, the results conducted by our framework is comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtain on SIFT-flow dataset, which is more challenging than the previous one. Figures \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the success and failure cases of three dataset respectively.
 
-\begin{table}[!h]
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -69,7 +71,12 @@ Vezhnevets \etal \cite{vezhnevets2012weakly} & weak & 21 \\
 Zhang \etal \cite{zhang2013sparse} & weak & 26 \\
 Zhang \etal \cite{zhang2013probabilistic} & weak & 27.7 \\
 Xu \etal \cite{xu2014tell} & weak & 27.9 \\
-Ours & weak & 30.2 \\
+Ours (0\%) & weak & 30.2 \\
+\hline
+Ours (20\%) & weak & 29.8 \\
+Ours (35\%) & weak & 29.1 \\
+Ours (50\%) & weak & 28.1 \\
+Ours (75\%) & weak & 22.3 \\
 \hline
 \end{tabular}
 \end{center}
@@ -79,17 +86,15 @@ Ours & weak & 30.2 \\
 \end{table}
 
 \subsection{Performance under the Noisy Condition}
-To verify both robustness and effectiveness of our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system, \eg Flickr. We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets. Then we perform a controlled test on these noisy dataset. As shown in Table \ref{tab:ExpNoise}, our approach is robust under the noisy condition.
+To verify both robustness and effectiveness of our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system, \eg Flickr. We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. 
 
 
 
-\begin{table}[!h]
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-Experiment Setting & exp1 & exp2 & exp3 & exp4 \\
-\hline
-Noisy Image (\%) & 23.2 & 33.8 & 53.4 & 77.8 \\
+Images with Noisy Label (\%) & 20 & 35 & 50 & 75 \\
 \hline
 Noisy Labels per Image & 1.4 & 1.5 & 1.8 & 2.4 \\
 \hline
@@ -103,28 +108,31 @@ Per-Class accuracy (\%) & 29.8 & 29.1 & 28.1 & 22.3 \\
 \end{table}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
     \includegraphics[width=1\linewidth]{fig_noisylabel.pdf}
 \end{center}
-    \caption{}
+\vspace{-3mm}
+\caption{}
 \label{fig:noisyexp}
 \end{figure}
 
 
 \begin{figure*}
 \begin{center}
-	\includegraphics[width=1\linewidth]{Fig_VOC.pdf}
+    \includegraphics[width=1\linewidth]{Fig_VOC.pdf}
 \end{center}
-   \caption{Qualitative results on the VOC-2007 data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\vspace{-3mm}
+\caption{Qualitative results on the VOC-2007 data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
 \label{fig:VOC-2007}
 \end{figure*}
 
 \begin{figure*}
 \begin{center}
-	\includegraphics[width=1\linewidth]{Fig_SIFTflow.pdf}
+    \includegraphics[width=1\linewidth]{Fig_SIFTflow.pdf}
 \end{center}
-   \caption{Qualitative results on the SIFT-flow data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\vspace{-3mm}
+\caption{Qualitative results on the SIFT-flow data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
 \label{fig:SIFT-flow}
 \end{figure*}
 
