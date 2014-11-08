@@ -37,7 +37,7 @@ We model input image by two aspects: On the one hand, we utilize convolutional n
 \begin{equation}
   P(w_i|d_j) = \sum_{k=1}^K{P(t_k|d_j)P(w_i|t_k)}
 \end{equation}
-where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. Formally we formulate image-level feature as $I$ by concatenating the appearance feature $d_j$ and topic distribution $P(w_i|d_j)$, and define the image-level label presence potential $\psi_{G}$ as follow:
+where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. Formally we formulate image-level feature as $I$ by concatenating the appearance feature $d_j$ and topic distribution $P(\boldsymbol{t}|d_j)$, and define the image-level label presence potential $\psi_{G}$ as follow:
 \begin{equation}
     \psi_{G}(y_i,I) = -\log f_{i}(I)
     \label{eq:global}
