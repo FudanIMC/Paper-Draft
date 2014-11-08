@@ -8,13 +8,15 @@ Different from the multi-label learning framework for fully supervised semantic 
 As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 20 categories on the PASCAL VOC 2007 dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
 Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
 
+In this section, we evaluate the effectiveness of our proposed approach for weakly supervised semantic segmentation in the real-world setting based on two sets of experiments. The first set of experiments compares our approach with state-of-the-art algorithms on two standard datasets. The second set of experiments verifies the robustness of our approach under the noisy condition, in the meantime, evaluates the individual components that contribute to noisy reduction.
+
 \subsection{Experimental Setup}
 \if
 In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
 \fi
 
 For a given dataset, we extract a 4296 dimensional global feature vector for each image by concatenating appearance feature and latent semantic concept distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution which learned from pLSA \cite{hofmann1999probabilistic}, as the latent semantic concept distribution.
-Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the superpixel respentation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
+Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the superpixel representation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
 
 \begin{figure}[!htb]
     \begin{center}
@@ -24,8 +26,8 @@ Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014m
     \label{fig:correlations}
 \end{figure}
 
-\subsection{Comparison with State of the Art}
-In this section, we compare our approach with the existing state of the art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
+\subsection{Comparison with State-of-the-art}
+In this experiment, we compare our approach with the existing state-of-the-art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
 
 \begin{table*}[htp] \small
 \begin{center}
