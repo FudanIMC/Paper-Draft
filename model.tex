@@ -31,18 +31,18 @@ where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional 
 \end{figure}
 
 \subsection{{\textcolor{red}{Untitled}}}
-We model input image by two aspects: On the one hand, we utilize convolutional neural network(CNN) to represent the appearance model of each image, especially the first fully-connected layer containing 4096 neurons of a 19-layers model\cite{simonyan2014very}. On the other hand, for topic model, we model the CNN representation as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA)\cite{sivic2005discovering}, which can recover visual models of semantic labels in a completely unsupervised manner.
+We model input image by two aspects: On the one hand, we utilize convolutional neural network (CNN) to represent the appearance model of each image, especially the first fully-connected layer containing 4096 neurons of a 19-layers model \cite{simonyan2014very}. On the other hand, for topic model, we model the CNN representation as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA) \cite{sivic2005discovering}, which can recover visual models of semantic labels in a completely unsupervised manner.
 
  Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. Similar to \cite{wang2014weakly}, we regard fully-connected layer as input considering each neuron as a visual word $w_i$ and each image as a document $d_j$, then the occurrence frequency of image on $w_i$ is the i-th dimension of $d_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,d_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
 \begin{equation}
   P(w_i|d_j) = \sum_{k=1}^K{P(t_k|d_j)P(w_i|t_k)}
 \end{equation}
-where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. Formally we formulate image-level feature as $I$ by concatenating the appearance feature $d_j$ and topic distribution $P(\boldsymbol{t}|d_j)$, and define the image-level label presence potential $\psi_{G}$ as follow:
+where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. Formally we formulate image-level feature as $I$ by concatenating the appearance feature $d_j$ and topic distribution $P(\boldsymbol{t}|d_j)$, and define the image-level label presence potential $\psi_{G}$ as follows:
 \begin{equation}
     \psi_{G}(y_i,I) = -\log f_{i}(I)
     \label{eq:global}
 \end{equation}
-where $f_{i}(I)$ is an multi-label classifier score function associated label $i$.
+where $f_{i}(I)$ is the classifier score function associated with label $i$.
 
 Similar with image level prediction, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels. Formally, we encode the unary potential of regions as follows:
 \begin{equation}
@@ -57,18 +57,18 @@ where $a_p, t_p$ are the appearance and topic feature vectors extracted from the
 \subsection{{\textcolor{red}{Untitled}}}
 In this section, we model inter-label co-occurrence by constructing inter-label correlation matrix which characterizing the interaction between semantic concepts and helps to model the relationship among feature space of superpixels. Due to the unknown semantic annotation of superpixels, learning these latent information is an unsupervised learning problem. Moreover, the context contain some useful latent information which can be learned for semantic label noise reduction.
 
-Here we consider two aspects to construct inter-label matrix, on the one hand, we construct co-occurrence matrix $Cooc$ to capture the inter-label correlation. $Cooc$ is an $L \times L$ symmetric matrix and its entry $Cooc(i,j)$, measuring the co-occurrence of concepts pair $(i,j)$ based on statistics, can be defined as follow:
+Here we consider two aspects to construct inter-label matrix, on the one hand, we construct co-occurrence matrix $Cooc$ to capture the inter-label correlation. $Cooc$ is an $L \times L$ symmetric matrix and its entry $Cooc(i,j)$, measuring the co-occurrence of concepts pair $(i,j)$ based on statistics, can be defined as follows:
 \begin{equation}
     Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))
 \end{equation}
 
-On the other hand, we determine the inter-label co-relation via discriminative regions overlap of concepts pair. The discriminative region of concept indicates the most informative sub-windows of each image within a multi-class classification framework. The basic idea is to analyze the variation of classification score when artificially blackout different regions of the image. We observe that blackout a discriminative sub-window causes a massive confusion for one-vs-one classifier, especially in cluster condition. This produces a set of sub-windows, that are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image. After localizing discriminative we can easily construct the inter-label correlation matrix by using both the available image-level label and region-level overlap. More concretely, we define the label correlation potential $\psi_R$ as follow:
+On the other hand, we determine the inter-label correlation via discriminative regions overlap of concepts pair. The discriminative region of concept indicates the most informative sub-windows of each image within a multi-class classification framework. The basic idea is to analyze the variation of classification score when artificially blackout different regions of the image. We observe that blackout a discriminative sub-window causes a massive confusion for one-vs-one classifier, especially in cluster condition. This produces a set of sub-windows, which are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image. After localizing discriminative area, we can easily construct the inter-label correlation matrix by using both the available image-level label and region-level overlap (as illustrated in Figure \ref{fig:correlations}). More concretely, we define the label correlation potential $\psi_R$ as follows:
 \begin{equation}
     \psi_{R}(y_i,y_j) = R(i,j) \cdot Cooc(i,j) \cdot I(y_i=y_j)
 \end{equation}
-where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative region between category $i$ and $j$, $Cooc(i,j)$ measures statistics co-occurrence and $I(\cdot)$ is the indicator function.
+where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative regions between category $i$ and $j$, $Cooc(i,j)$ measures statistics co-occurrence and $I(\cdot)$ is the indicator function.
 
-Considering the weakness of the single choice of segmentation, we utilize multiple segmentations to disambiguate low-level segmentation cues. We divide the superpixels into different quantization level according to the particular segmentation scale we chose. Then we include the inter-level energy cost $\phi_{inter}$ to investigate the most suitable segmentation scale each object belongs to. Besides, we integrate the intra-level energy cost $\phi_{intra}$, which could discourage superpixel-level noise, to smooth the object boundaries. Let the two neighboring superpixels (either inter-level or intra-level) be $x_p$ and $x_q$ (\ie, $(p,q) \in \mathcal{E}$), we define the pairwise potential $\psi_S$ as follows,
+Considering the weakness of the single choice of segmentation, we utilize multiple segmentations to disambiguate low-level segmentation cues. We divide the superpixels into different quantization level according to the particular segmentation scale we chose. Then we include the inter-level energy cost $\phi_{inter}$ to investigate the most suitable segmentation scale each object belongs to. Besides, we integrate the intra-level energy cost $\phi_{intra}$, which could discourage superpixel-level noise, to smooth the object boundaries. Let the two neighboring superpixels (inter-level or intra-level) be $x_p$ and $x_q$ (\ie, $(p,q) \in \mathcal{E}$), we define the pairwise potential $\psi_S$ as follows,
 \begin{equation}
     \psi_{S}(h_p,h_q) =
     \begin{cases}
@@ -97,7 +97,7 @@ We require that the superpixel labels be consistent with the image labels: if an
     \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
     C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
 \end{equation}
-where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels.
+where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels. It is worth noting that such label consistency potential is a soft constraint. Thus, we can further simultaneously refine superpxiel label and image label via an iterative process. 
 
 \begin{figure*}[!htb]
     \begin{center}
@@ -108,7 +108,8 @@ where $I(\cdot)$ is the indicator function and $C$ is a positive constant that p
 \end{figure*}
 
 \subsection{Learning Parameters}
-Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potential by median of maximum per unary term contribution of all the pairwise potentials in order to make them comparable to unary potentials. After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
+Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials and make them comparable to unary potentials instead of using cross-validation procedure.
+After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
 
 \subsection{Joint Inference with Alternating Procedure}
 \label{sec:inference}
