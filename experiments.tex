@@ -56,7 +56,9 @@ This dataset was used for the PASCAL Visual Object Category segmentation contest
 
 \textbf{SIFT-flow} The SIFT-flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 2688 images of resolution 256x256 pixels, accompanied with a hand labeled segmentation of 33 unique semantic categories. This dataset has been widely adopted for semantic segmentation and it is also very challenging for the reason that there are large number of classes in the dataset and $4.43$ classes per image. Besides, the frequency of classes is distributed with a pow-low. For fair comparison, we use standard dataset split (2488 images for training and 200 images for testing) provided by \cite{liu2011nonparametric}.
 
-\textbf{Quantitative and Qualitative Results} Comparisons of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the VOC2007 dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotation are more efficiently utilized by our method. In the meantime, the results conducted by our framework is comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtain on SIFT-flow dataset, which is more challenging than the previous one. Figures \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the success and failure cases of three dataset respectively.
+\textbf{Quantitative and Qualitative Results} Comparisons of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the VOC2007 dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotation are more efficiently utilized by our method. In the meantime, the results conducted by our framework is comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtain on SIFT-flow dataset, which is more challenging than the previous one.
+
+Figures \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the success and failure cases of three dataset respectively.
 
 \begin{table}[ht]
 \begin{center}
@@ -73,12 +75,12 @@ Vezhnevets \etal \cite{vezhnevets2012weakly} & weak & 21 \\
 Zhang \etal \cite{zhang2013sparse} & weak & 26 \\
 Zhang \etal \cite{zhang2013probabilistic} & weak & 27.7 \\
 Xu \etal \cite{xu2014tell} & weak & 27.9 \\
-Ours (0\%) & weak & 30.2 \\
+Ours (0\% noise) & weak & 30.2 \\
 \hline
-Ours (20\%) & weak & 29.8 \\
-Ours (35\%) & weak & 29.1 \\
-Ours (50\%) & weak & 28.1 \\
-Ours (75\%) & weak & 22.3 \\
+Ours (20\% noise) & weak & 29.8 \\
+Ours (35\% noise) & weak & 29.1 \\
+Ours (50\% noise) & weak & 28.1 \\
+Ours (75\% noise) & weak & 22.3 \\
 \hline
 \end{tabular}
 \end{center}
@@ -88,9 +90,11 @@ Ours (75\%) & weak & 22.3 \\
 \end{table}
 
 \subsection{Performance under the Noisy Condition}
-To verify both robustness and effectiveness of our method to noisy annotation condition, we try to add some noise to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system, \eg Flickr. We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}.
+To verify both robustness and effectiveness of our method to noisy annotation condition, we try to reproduce the real-world noise distribution to the initial image-level labels for SiftFlow dataset. More concretely, for a certain image in the dataset, each image-level label might be missing or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system. In particular, the inter-label confusion matrix is determined by manual observation. We utilize Flickr API using queries for predefined semantic concepts and collect the number of incorrect labeling error occurred. After normalization we obtain the representative inter-label confusion probability distribution matrix from statistics of real-world images.
 
-To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moveover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threthold and the latent semantic concept distribution seems more efficient when there are large mount of noisy labels.
+Then we fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. That is, the different level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
+
+To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moreover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threshold and the latent semantic concept distribution seems more efficient when there are large mount of noisy labels.
 
 \begin{table}[ht]
 \begin{center}
@@ -100,7 +104,9 @@ Images with Noisy Label (\%) & 20 & 35 & 50 & 75 \\
 \hline
 Noisy Labels per Image & 1.4 & 1.5 & 1.8 & 2.4 \\
 \hline
-Per-Class accuracy (\%) & 29.8 & 29.1 & 28.1 & 22.3 \\
+Per-Class Accuracy (\%) & 29.8 & 29.1 & 28.1 & 22.3 \\
+\hline
+Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
 \hline
 \end{tabular}
 \end{center}
