@@ -1,14 +1,15 @@
 % !TEX root = 15cvpr.tex
 \section{Experiments}
-
+\if
 In real world applications, multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). In this section, {\textcolor{red}{we infer semantic labels by capturing correlations among multiple labels and the interconnection between the low-level visual features and the high-level semantic concepts.}}
 
 Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
 
 As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 20 categories on the PASCAL VOC 2007 dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
 Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
+\fi
 
-In this section, we evaluate the effectiveness of our proposed approach for weakly supervised semantic segmentation in the real-world setting based on two sets of experiments. The first set of experiments compares our approach with state-of-the-art algorithms on two standard datasets. The second set of experiments verifies the robustness of our approach under the noisy condition, in the meantime, evaluates the individual components that contribute to noisy reduction.
+In this section, we evaluate the effectiveness of our proposed approach for weakly supervised semantic segmentation in real-world settings based on two sets of experiments. The first set of experiments compares our approach with state-of-the-art algorithms on two standard datasets. The second set of experiments verifies the robustness of our approach under the noisy condition, in the meantime, evaluates the individual components that contribute to noisy reduction.
 
 \subsection{Experimental Setup}
 \if
@@ -17,14 +18,6 @@ In particular, we extract a 4296 dimensional feature vector for each image by co
 We utilize an linear maximum margin classifier leveraging both convolutional neural network feature and latent semantic concepts distribution in order to construct $\psi_{G}(y_i,I)$ for label refinement. In particular, we extract a 4296 dimensional global feature vector for each image by concatenating appearance feature and latent semantic concept distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the 4096-dimensional appearance feature, and topic distribution learned from pLSA \cite{hofmann1999probabilistic}, as the 200-dimensional latent semantic concept distribution. We use the publicly available implementation of \cite{jia2014caffe} to compute the CNN features, and an one-vs-one linear support vector machine \cite{fan2008liblinear} per class for initial guess for image-level annotations.
 
 Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the superpixel representation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
-
-\begin{figure}[!htb]
-    \begin{center}
-        \includegraphics[width=1\linewidth]{fig_correlations.pdf}
-    \end{center}
-    \caption{Example of a short caption, which should be centered.}
-    \label{fig:correlations}
-\end{figure}
 
 \subsection{Comparison with State-of-the-art}
 In this experiment, we compare our approach with the existing state-of-the-art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
@@ -96,7 +89,7 @@ Then we fix the probability $p_{ij}$, and set different values of $p_{missing}$ 
 
 To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moreover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threshold and the latent semantic concept distribution seems more efficient when there are large mount of noisy labels.
 
-\begin{table}[ht]
+\begin{table}[htb]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
@@ -111,24 +104,24 @@ Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
 \end{tabular}
 \end{center}
 %\vspace{-3mm}
-\caption{Quantitative results  }
+\caption{Extra statistics on noisily labeled SIFT-flow dataset as well as quantitative results on semantic segmentation and label refinement of our approach.}
 \label{tab:ExpNoise}
 \end{table}
 
 
-\begin{figure}[ht]
+\begin{figure}[htb]
 \begin{center}
     \includegraphics[width=1\linewidth]{fig_noisylabel.pdf}
 \end{center}
 \vspace{-3mm}
-\caption{}
+\caption{Performance decrease on noisily labeled SIFT-flow dataset of components removing under the noisy condition.}
 \label{fig:noisyexp}
 \end{figure}
 
 
 \begin{figure*}
 \begin{center}
-    \includegraphics[width=1\linewidth]{Fig_VOC.pdf}
+    \includegraphics[width=0.9\linewidth]{Fig_VOC.pdf}
 \end{center}
 \vspace{-3mm}
 \caption{Qualitative results on the VOC-2007 data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
@@ -137,7 +130,7 @@ Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
 
 \begin{figure*}
 \begin{center}
-    \includegraphics[width=1\linewidth]{Fig_SIFTflow.pdf}
+    \includegraphics[width=0.9\linewidth]{Fig_SIFTflow.pdf}
 \end{center}
 \vspace{-3mm}
 \caption{Qualitative results on the SIFT-flow data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
