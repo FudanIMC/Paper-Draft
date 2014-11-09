@@ -32,9 +32,12 @@ where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional 
 
 \subsection{Unary Potential}
 \textbf{Image-Level Potential}
-We model input image by two aspects: On the one hand, we utilize convolutional neural network (CNN) to represent the appearance model of each image, especially the first fully-connected layer containing 4096 neurons of a 19-layers model \cite{simonyan2014very}. On the other hand, for topic model, we model the CNN representation as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA) \cite{sivic2005discovering}, which can recover visual models of semantic labels in a completely unsupervised manner.
+We model input image by two aspects: on the one hand, we utilize convolutional neural network (CNN) feature to represent the appearance model of each image, on the other hand, for topic model, we model the CNN representation as a finite mixture of latent semantic concepts by probabilistic latent semantic analysis (pLSA) \cite{sivic2005discovering}, which can recover visual models of semantic labels in a completely unsupervised manner. Due to the unknown semantic annotation of superpixels, learning these latent information is an unsupervised learning problem. Moreover, the context contain some useful latent information which can be learned for semantic label noise reduction.
+
 \if
-Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input. 
+especially the first fully-connected layer containing 4096 neurons of a 19-layers model \cite{simonyan2014very}.
+
+Probabilistic latent semantic analysis (pLSA) is a probabilistic model that is well suited to weakly supervision. Each image has its own mixing proportions whereas the topics are shared by all images. In document analysis, the pLSA usually takes the histogram of occurrence frequency on words as input.
 \fi
 Similar to \cite{wang2014weakly}, we regard fully-connected layer as input considering each neuron as a visual word $w_i$ and each image as a document $d_j$, then the occurrence frequency of image on $w_i$ is the i-th dimension of $d_j$. In addition, there is a hidden semantic topic variable $t_k$ associated with all the visual words. We treat each topic $t_k$ as a latent category in a semantic label. The pLSA optimizes the joint probability $P(w_i,d_j,t_k)$. Marginalizing over the latent category $t_k$ determines the conditional probability $P(w_i|t_k)$:
 \begin{equation}
@@ -48,7 +51,7 @@ where $P(t_k|d_j)$ is the probability of topic $t_k$ occurring in image $j$. For
 where $f_{i}(I)$ is the classifier score function associated with label $i$.
 
 \textbf{Superpixel-Level Potential}
-Similar with image-level potential, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels. Formally, we encode the unary potential of regions as follows:
+Similar with image-level potential, we both consider the appearance model and topic model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the adverse effect of noisy image-level labels. Formally, we encode the unary potential of regions as follows:
 \begin{equation}
     \begin{aligned}
         \psi_{L}(h_p,x_p) = &- \log \big\{ w_1\phi_a(h_p,a_p,\theta_a) \\
@@ -61,7 +64,7 @@ where $a_p, t_p$ are the appearance and topic feature vectors extracted from the
 \subsection{Pairwise Potential}
 
 \textbf{Label Correlation}
-We model inter-label co-occurrence by constructing inter-label correlation matrix which characterizing the interaction between semantic concepts and helps to model the relationship among feature space of superpixels. Due to the unknown semantic annotation of superpixels, learning these latent information is an unsupervised learning problem. Moreover, the context contain some useful latent information which can be learned for semantic label noise reduction.
+We model inter-label correlation by constructing inter-label co-occurrence matrix characterizing the interaction between semantic concepts while modeling the relationship among feature space of superpixels.
 
 \begin{figure}[htb]
     \begin{center}
@@ -76,7 +79,9 @@ Here we consider two aspects to construct inter-label matrix, on the one hand, w
     Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))
 \end{equation}
 
-On the other hand, we determine the inter-label correlation via \textcolor{red}{discriminative regions overlap of concepts pair}. The discriminative region of concept indicates the most informative sub-windows of each image within a multi-class classification framework. The basic idea is to analyze the variation of classification score when artificially blackout different regions of the image. We observe that blackout a discriminative sub-window causes a massive confusion for one-vs-one classifier, especially in cluster condition. This produces a set of sub-windows, which are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image. After localizing discriminative area, we can easily construct the inter-label correlation matrix by using both the available image-level label and region-level overlap (as illustrated in Figure \ref{fig:correlations}). More concretely, we define the label correlation potential $\psi_R$ as follows:
+On the other hand, we determine the inter-label correlation via \textcolor{red}{discriminative regions overlap of concepts pair}. The discriminative region of concept indicates the most informative sub-windows of each image within a multi-class classification framework. The basic idea is to analyze the variation of classification score when artificially removing different regions of the image, which means setting specific area of raw image to 0 in RGB color space. We observe that discarding a discriminative sub-window causes a massive confusion for one-vs-one classifier, especially in cluster condition. After producing a set of sub-windows, which are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image, clustering technique, {\textcolor{red}{which merges regions according to their relative drop in classification score in addition to criteria of size of the selected area,}} is applied to generate discriminative region hypotheses for semantic categories.
+
+In this way, we can easily construct the inter-label correlation matrix by using both the available image-level label and region-level overlap (as illustrated in Figure \ref{fig:correlations}). More concretely, we define the label correlation potential $\psi_R$ as follows:
 \begin{equation}
     \psi_{R}(y_i,y_j) = R(i,j) \cdot Cooc(i,j) \cdot I(y_i=y_j)
 \end{equation}
@@ -112,7 +117,7 @@ We require that the superpixel labels be consistent with the image labels: if an
     \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
     C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
 \end{equation}
-where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels. It is worth noting that such label consistency potential is a soft constraint. Thus, we can further simultaneously refine superpxiel label and image label via an iterative process. 
+where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the global and local labels. It is worth noting that such label consistency potential is a soft constraint for noisy image-level annotations. Thus, we can further simultaneously refine superpxiel label and image label via an iterative process.
 
 \subsection{Learning Parameters}
 Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials and make them comparable to unary potentials instead of using cross-validation procedure.
