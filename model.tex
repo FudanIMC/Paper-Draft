@@ -2,13 +2,23 @@
 
 \section{The Proposed Model}
 
-We formulate the semantic segmentation problem as an Conditional Random Field (CRF) over image superpixels incorporating various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, and the label consistency between image-level and pixel-level, to advance segmentation performance, even in noisy real-world settings. Moreover, the connections among semantic labels, which are captured by two aspects, inter-label co-occurrence statistics as well as discriminative regions overlap of concepts pairs, are integrated to determine latent associations for annotation noise reduction.
+\begin{figure*}[htb]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{graphmodel.pdf}
+    \end{center}
+    \vspace{-3mm}
+    \caption{Example of a short caption, which should be centered.}
+    \vspace{-3mm}
+    \label{fig:graphmodel}
+\end{figure*}
+
+We formulate the semantic segmentation problem as a Conditional Random Field (CRF) over image superpixels incorporating various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, and the label consistency between image-level and pixel-level, to advance segmentation performance, even in noisy real-world settings. Moreover, the connections among semantic labels, which are captured by two aspects, inter-label co-occurrence statistics as well as discriminative regions overlap of concepts pairs, are integrated to determine latent associations for annotation noise reduction.
 
 More formally, suppose we have a set of weakly labeled images $\mathcal{I}=\{I_k\}_{k=1}^N$, where $N$ donates the total number of training images. Each image $I$ is associated with a vector of the $L$ binary variables $\boldsymbol{y} = (y_1,...,y_L)^{\rm T}$, \ie $y_i \in \{0,1\}$, where $y_i=1$ indicates that the $i$-th category is present in this image, and $0$ otherwise.
 
 We adopt a superpixel representation of each image $I$, where the superpixels are generated from multi-scale segmentation algorithm. Then we associate every superpixel $x_p$ ($p \in \mathcal{V}$) with a random variable $h_p \in \mathcal{C}$ to represent its semantic category. Here, $\mathcal{V} = \{1,...,M\}$ is a set of all the superpixels in image $I$ and $M$ indicates the total number of superpixels. Besides, $\mathcal{C} = \{1,...,L\}$ denotes the set of predefined labels.
 
-Our goal is to find the accurate semantic label for each pixel in an image and the adjacent pixels sharing the same semantic label are fused as the whole one. To tackle this problem, we build a Conditional Random Field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$. We connect each superpixel variables to its neighbors to encode a local smoothness constraint. Specifically, let $\mathcal{E}$ donate the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
+Our goal is to find the most suitable semantic label for each pixel in an image and the adjacent pixels sharing the same semantic label are fused as the whole one. To tackle this problem, we build a Conditional Random Field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$. We connect each superpixel variables to its neighbors to encode a local smoothness constraint. Specifically, let $\mathcal{E}$ donate the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
 \begin{equation}
     \label{eq:energyfunction}
     \begin{aligned}
@@ -21,14 +31,6 @@ where $\psi_G$ and $\psi_{L}$ encode the unary potential of global and regional 
 \if
  We utilize a label classifier which leverages convolutional Neural Network(CNN) for noisy label refinement.\cite{agrawal2014analyzing} shows that fine-tuning a discriminatingly pre-trained network is very effective in terms of task performance. Unfortunately, the appearance model cannot be trained or fine-tuned directly due to the fact that the assignment of superpixels to semantic labels is unknown, even at training time.
 \fi
-
-\begin{figure}[t]
-    \begin{center}
-        \includegraphics[width=1\linewidth]{fig_framework.pdf}
-    \end{center}
-    \caption{Illustration of our joint inference system. We simultaneously optimize the image-level label as well as superpixel-level label in a unified model so as to obtain the most suitable label configurations.}
-    \label{fig:framework}
-\end{figure}
 
 \subsection{Unary Potential}
 \textbf{Image-Level Potential}
@@ -121,11 +123,20 @@ where $I(\cdot)$ is the indicator function and $C$ is a positive constant that p
 
 \subsection{Learning Parameters}
 Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials and make them comparable to unary potentials instead of using cross-validation procedure.
-After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
+After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg, \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
+
+\begin{figure}[tb]
+    \begin{center}
+        \includegraphics[width=1\linewidth]{fig_framework.pdf}
+    \end{center}
+    \vspace{-3mm}
+    \caption{Illustration of our joint inference system. We simultaneously optimize the image-level label as well as superpixel-level label in a unified model so as to obtain the most suitable label configurations.}
+    \label{fig:framework}
+\end{figure}
 
 \subsection{Joint Inference with Alternating Procedure}
 \label{sec:inference}
-Given an image $I$, our task is to assign each pixel a predefined semantic label. We achieve this as an energy minimization problem \eqref{eq:energyfunction}, in which our inference algorithm searches for optimal configuration of image-level label $\boldsymbol{y}^\star$ and superpixel-level label $\boldsymbol{h}^\star$. To efficiently minimize the energy function, we solve it in the following two alternating optimization steps:
+Given an image $I$, our task is to assign each pixel a predefined semantic label. We achieve this as an energy minimization problem, in which our inference algorithm searches for optimal configuration of image-level label $\boldsymbol{y}^\star$ and superpixel-level label $\boldsymbol{h}^\star$. To efficiently minimize the energy function \eqref{eq:energyfunction}, we solve it in the following two alternating optimization steps:
 \begin{equation}
     \label{eq:binaryCRF}
     \begin{aligned}
@@ -138,18 +149,18 @@ Given an image $I$, our task is to assign each pixel a predefined semantic label
         \boldsymbol{h}^* = \arg\min_{\boldsymbol{h}} &\sum_{p} {\psi_{L}(h_p,x_p)} + \frac{1}{2} \psi_{C}(\boldsymbol{y}^*,\boldsymbol{h}) \\ &+ \sum_{(p,q) \in \mathcal{E}}{\psi_{S}(h_p,h_q)}.
     \end{aligned}
 \end{equation}
-As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:binaryCRF} has an explicit solution which utilizes min-cut/max-flow algorithms (\eg the Dinic algorithm \cite{dinits1970algorithm}) to obtain the global optimal label configuration. And the second subproblem in Equation \eqref{eq:multiclassCRF} reduces to an energy minimization for a multi-class CRF. Although finding the global optimum for this energy function has been proved to be a NP-hard problem, there are various approximate methods for fast inference, such as approximate \textit{maximum a posteriori} (MAP) methods (\eg graph-cuts \cite{boykov2001fast}). In this paper, we adopt \textit{move making} approach \cite{boykov2001fast} that finds the optimal $\alpha$-expansion \cite{boykov2001fast,kolmogorov2004energy} by converting the problems into binary labeling  problems which can be solved efficiently using graph cuts techniques. The energy obtain by $\alpha$-expansion has been proved to be within a known factor of the global optimum \cite{boykov2001fast}. Considering the two alternate optimization steps together, we summarize our XXXX in Algorithm \ref{alg:energy}.
+As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:binaryCRF} has an explicit solution which utilizes min-cut/max-flow algorithms (\eg, the Dinic algorithm \cite{dinits1970algorithm}) to obtain the global optimal label configuration. And the second subproblem in Equation \eqref{eq:multiclassCRF} reduces to an energy minimization for a multi-class CRF. Although finding the global optimum for this energy function has been proved to be a NP-hard problem, there are various approximate methods for fast inference, such as approximate \textit{maximum a posteriori} (MAP) methods (\eg, graph-cuts \cite{boykov2001fast}). In this paper, we adopt \textit{move making} approach \cite{boykov2001fast} that finds the optimal $\alpha$-expansion \cite{boykov2001fast,kolmogorov2004energy} by converting the problems into binary labeling  problems which can be solved efficiently using graph cuts techniques. The energy obtain by $\alpha$-expansion has been proved to be within a known factor of the global optimum \cite{boykov2001fast}. Considering the two alternate optimization steps together, we summarize our joint inference system in Algorithm \ref{alg:energy}.
 
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm
 \renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm
 
 \begin{algorithm}
-\caption{Energy minimization Inference}
+\caption{Energy Minimization Inference}
 \label{alg:energy}
 \begin{algorithmic}[1]
     \Require
-    a test image $I$ and its representation of superpixels $\{x_p\}$
+    a image $I$ and its representation of superpixels $\{x_p\}$
     \Ensure
     the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$
     \State Construct the graphical model according to the energy function \eqref{eq:energyfunction}.

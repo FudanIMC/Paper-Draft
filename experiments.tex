@@ -37,10 +37,11 @@ In this experiment, we compare our approach with the existing state-of-the-art w
 Weakly & Zhang \etal \cite{zhang2013sparse} & 24 & $-$ & 48 & 20 & 26 & 25 & 3 & 7 & 23 & 13 & 38 & 19 & 15 & 39 & 17 & 18 & 25 & 47 & 9 & 41 & 17 & 33 \\
 Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19 & 25 & 29 & 26 & 19 & 12 & 18 & 4 & 28 & 28 \\
 \end{tabular}
+\vspace{3mm}
 \caption{Quantitative analysis of VOC2007 results \cite{pascal-voc-2007}, intersection vs. union measure, define as $\frac{TP}{TP + FN + FP}$, in comparison with state-of-the-art methods. The results of fully supervised methods are taken from \cite{pascal-voc-2007}. }
 \label{tab:ExpVOC_test}
 \end{center}
-\vskip -0.1in
+\vspace{-3mm}
 \end{table*}
 
 \textbf{PASCAL VOC 2007}
@@ -85,10 +86,6 @@ Ours (75\% noise) & weak & 22.3 \\
 \subsection{Performance under the Noisy Condition}
 To verify both robustness and effectiveness of our method to noisy annotation condition, we try to reproduce the real-world noise distribution to the initial image-level labels for SIFT-flow dataset. More concretely, for a certain image in the dataset, each image-level label might be omitted or replaced by other incorrect labels. Suppose the probability of missing label is $p_{missing}$, and the probability of labeling category $i$ instead of category $j$ is $p_{ij}$ which is based on the empirical evidence from the collaborative image tagging system. In particular, the inter-label confusion matrix is determined by manual observation. We utilize Flickr API using queries for predefined semantic concepts and collect the number of incorrect labeling error occurred. After normalization we obtain the representative inter-label confusion probability distribution matrix from statistics of real-world images.
 
-We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. The level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
-
-To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moreover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threshold and the latent semantic concept distribution seems more effective when there are large mount of noisy labels.
-
 \begin{table}[htb]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -108,7 +105,6 @@ Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
 \label{tab:ExpNoise}
 \end{table}
 
-
 \begin{figure}[htb]
 \begin{center}
     \includegraphics[width=1\linewidth]{fig_noisylabel.pdf}
@@ -118,6 +114,9 @@ Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
 \label{fig:noisyexp}
 \end{figure}
 
+We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. The level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
+
+To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moreover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threshold and the latent semantic concept distribution seems more effective when there are large mount of noisy labels.
 
 \begin{figure*}
 \begin{center}
