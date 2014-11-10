@@ -1,9 +1,9 @@
 % !TEX root = 15cvpr.tex
 \begin{abstract}
-	In this paper,
-	\if
-	we tackle the problem of weakly supervised semantic segmentation in real-world images. Semantic segmentation is the task of assigning each superpixel to one of semantic categories. Although similar issues such as fully supervised and weakly supervised semantic segmentation have been previously studied,
-	\fi
-	we focus on performing semantic segmentation in real-world settings, where the only source of annotation is image-level labels encoding which categories are present in the image, and worse, the annotation can be noisy. To address these issues, we present a joint CRF model leveraging various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, and the label consistency between image-level and pixel-level, to advance segmentation performance, even in noisy real-world settings. Moreover, the connections among semantic labels, which are captured by two aspects, inter-label co-occurrence statistics as well as \textcolor{red}{discriminative regions overlap of concepts pairs}, are integrated to determine latent
-	associations for annotation noise reduction. In experiments on two challenging PASCAL VOC2007 and SIFT-flow datasets, our method outperforms previous state-of-the-art weakly supervised approaches and achieves accuracy comparable with fully supervised methods. In addition, we also verify both robustness and effectiveness to noisy annotation condition and show that our method can tackle noisy images with incorrect or incomplete annotations.
+Semantic segmentation is the task of partitioning an image into several regions based on semantic concepts. 
+In this paper, we learn the weakly supervised semantic segmentation model from social images whose labels are provided by Internet users; however, these labels are not pixel-level but image-level, and these labels are usually imprecise and incomplete.
+We present a joint CRF model to leverage various contexts, i.e., the associations between high-level semantic concepts and low-level visual appearance, inter-label correlations, spatial neighborhood cues, and the label consistency between image-level and pixel-level. 
+More specifically, we partition the image into different quantization level according to the particular segmentation scale, and we extract global and local features for multiple scales by convolutional neural network (CNN) and topic model. 
+Inter-label correlations are captured by visual contextual cues in addition to label co-occurrence statistics.
+Experimental results on two real-world image datasets PASCAL VOC2007 and SIFT-flow show that our method outperforms state-of-the-art weakly supervised approaches and even achieves accuracy comparable with fully supervised methods.
 \end{abstract}
