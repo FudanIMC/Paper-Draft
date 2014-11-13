@@ -41,7 +41,7 @@ Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19
 \caption{Quantitative analysis of VOC2007 results \cite{pascal-voc-2007}, intersection vs. union measure, define as $\frac{TP}{TP + FN + FP}$, in comparison with state-of-the-art methods. The results of fully supervised methods are taken from \cite{pascal-voc-2007}. }
 \label{tab:ExpVOC_test}
 \end{center}
-\vspace{-3mm}
+\vspace{-6mm}
 \end{table*}
 
 \textbf{PASCAL VOC 2007}
@@ -69,17 +69,18 @@ Vezhnevets \etal \cite{vezhnevets2012weakly} & weak & 21 \\
 Zhang \etal \cite{zhang2013sparse} & weak & 26 \\
 Zhang \etal \cite{zhang2013probabilistic} & weak & 27.7 \\
 Xu \etal \cite{xu2014tell} & weak & 27.9 \\
-Ours (0\% noise) & weak & 30.2 \\
+Ours (0\% noise) & weak & 32.3 \\
 \hline
-Ours (20\% noise) & weak & 29.8 \\
-Ours (35\% noise) & weak & 29.1 \\
-Ours (50\% noise) & weak & 28.1 \\
+Ours (10\% noise) & weak & 32.8 \\
+Ours (25\% noise) & weak & 32.4 \\
+Ours (50\% noise) & weak & 29.8 \\
 Ours (75\% noise) & weak & 22.3 \\
 \hline
 \end{tabular}
 \end{center}
 %\vspace{-3mm}
 \caption{Quantitative results on the SIFT-flow dataset \cite{liu2011nonparametric}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
+\vspace{-3mm}
 \label{tab:ExpSIFTflow_Test}
 \end{table}
 
@@ -92,19 +93,20 @@ We construct label pair confusion matrix where each entry $p_{ij}$ indicate the 
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-Images with Noisy Label (\%) & 20 & 35 & 50 & 75 \\
+Images with Noisy Label (\%) & 10 & 25 & 50 & 75 \\
 \hline
-Noisy Labels per Image & 1.4 & 1.5 & 1.8 & 2.4 \\
+Noisy Labels per Image & 1.3 & 1.4 & 1.7 & 2.4 \\
 \hline
-Per-Class Accuracy (\%) & 29.8 & 29.1 & 28.1 & 22.3 \\
+Per-Class Accuracy (\%) & 32.8 & 32.4 & 29.8 & 22.3 \\
 \hline
-Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
+Label Refinement (\%) & 93.7 & 93.4 & 92.3 & 90.4 \\
 \hline
 \end{tabular}
 \end{center}
 %\vspace{-3mm}
 \caption{Extra statistics on noisily labeled SIFT-flow dataset as well as quantitative results on semantic segmentation and label refinement of our approach.}
 \label{tab:ExpNoise}
+\vspace{-3mm}
 \end{table}
 
 \begin{figure}[htb]
@@ -116,7 +118,10 @@ Label Refinement (\%) & 93.5 & 93.1 & 92.4 & 90.4 \\
 \label{fig:noisyexp}
 \end{figure}
 
-We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. The level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
+We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. The level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches.
+\if
+, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
+\fi
 
 To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moreover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threshold and the latent semantic concept distribution seems more effective when there are large mount of noisy labels.
 
