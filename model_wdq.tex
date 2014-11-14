@@ -66,7 +66,7 @@ Formally, let $\boldsymbol{x_p} = (\boldsymbol{a_p},\boldsymbol{c_p})$ indicates
     \end{aligned}
     \label{eq:local}
 \end{equation}
-where $\boldsymbol{\theta_a^l}, \boldsymbol{\theta_c^l}$ donate the parameters for state $l \in \{1,2,...,L\}$ with respect to appearance model and latent semantic concept model, $w_1,w_2$ are the weighting coefficients for the unary terms.
+where $\boldsymbol{\theta_a^l}, \boldsymbol{\theta_c^l}$ denote the parameters for state $l \in \{1,2,...,L\}$ with respect to appearance model and latent semantic concept model, $w_1,w_2$ are the weighting coefficients for the unary terms.
 The details of learning $\boldsymbol{\theta_a}$ and $\boldsymbol{\theta_c}$ will be illustrated in Section \ref{learningparameters}.
 
 \subsection{Pairwise Potential}
@@ -102,7 +102,7 @@ where $R(i,j)$, scaled to $[0,1]$, is calculated from the average overlapping ar
 
 As an illustration, Figure \ref{fig:correlations} demonstrates the graphical description of label correlation model. Upper left shows co-occurrence matrix $A$ displaying the interaction between semantic concepts. The brighter the block is, the stronger the co-occurrence probability is. Bottom left illustrates an example of visual contextual clues, as known as overlapping area of discriminative regions. The larger the overlap is, the closer the labels pair correlation is.
 
-Person, bicycle and house are three annotated semantic concept in this image, whose discriminative region is marked as bounding box in different color. The yellow box localizes the discriminative region of bicycle which is almost same to ground truth. The huge overlap between bicycle and person, strongly suggests the closer relationship between these two concepts, compared to rarely small overlap between bicycle and house. The figure on the right side clarifies the label correlation graph that integrates left two models. The interdependency of concepts pair is quantized on the edge between two label nodes. The bigger the value is, the higher the correlation is.
+Person, motor and house are three annotated semantic concept in this image, whose discriminative region is marked as bounding box in different color. The yellow box localizes the discriminative region of motor which is almost same to ground truth. The huge overlap between motor and person, strongly suggests the closer relationship between these two concepts, compared to no overlap between motor and house. The figure on the right side clarifies the label correlation graph that integrates left two models. The interdependency of concepts pair is quantized on the edge between two label nodes. The bigger the value is, the higher the correlation is.
 
 \textbf{Hierarchical Model and Spatial Constraints}
 Considering the weakness of the single choice of segmentation, we utilize multiple segmentations to disambiguate low-level segmentation cues.
