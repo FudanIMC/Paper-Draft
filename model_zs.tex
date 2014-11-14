@@ -21,9 +21,9 @@ Here, $M$ is the total number of superpixels in image $I$.
 The label of superpixel $x_p$ is denoted as $h_p\in \{1,2,...,L\}$, and the labels of all superpixels for image $I$ are $\boldsymbol{h}=[h_1,...,h_M]$, which are not provided in training/test stage.
 
 Our goal is to infer the most suitable semantic label for each superpixel in an image and the adjacent superpixels sharing the same semantic label are fused as the whole one.
-To tackle this problem, we build a conditional random field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$.
+In order to achieve this, we build a conditional random field (CRF) on the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$.
 We connect each superpixel variables to its neighbors to encode a local smoothness constraint.
-Specifically, let $\mathcal{E}$ denote the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
+Specifically, let $\mathcal{N}$ denote the neighborhood system among the superpixels, we define an energy function $E$ with five types of potential as follows:
 \begin{equation}
     \label{eq:energyfunction}
     \begin{aligned}
@@ -49,15 +49,15 @@ Marginalizing over the latent concept $t_k$ determines the conditional probabili
   P(w_i|d_j) = \sum_{k=1}^K{P(t_k|d_j)P(w_i|t_k)}
 \end{equation}
 where $P(t_k|d_j)$ is the probability of latent semantic concept $t_k$ occurring in image $j$.
-Formally, we formulate image-level feature as $I$ by concatenating the appearance feature $d_j$ and latent semantic concept distribution $P(\boldsymbol{t}|d_j)$, and define the image-level label presence potential $\varphi_{i}$ as follows:
+Formally, we formulate image-level feature as $I$ by concatenating the appearance feature $d_j$ and latent semantic concept distribution $P(\boldsymbol{t}|d_j)$, and define the $i$-th image-level label presence potential $\varphi_{i}$ as follows:
 \begin{equation}
     \varphi_{i}(y_i,I) = -\log f_{i}(I)
     \label{eq:global}
 \end{equation}
-where $f_{i}(I)$ is the classifier score function associated with label $i$.
+where $f_{i}(I)$ is the linear support vector machine score function associated with label $i$.
 
 \textbf{Superpixel-Level Potential}
-Similar with image-level potential, we both consider the appearance model and latent semantic concept model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the influence of inaccurate image-level labels.
+Similar with image-level potential, we both consider the appearance model and latent semantic concept model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the negative impact of inaccurate image-level labels.
 Formally, we encode the unary potential of superpixel-level as follows:
 \begin{equation}
     \begin{aligned}
@@ -66,8 +66,8 @@ Formally, we encode the unary potential of superpixel-level as follows:
     \end{aligned}
     \label{eq:local}
 \end{equation}
-where $a_p, c_p$ are the appearance feature and latent semantic concept distribution vectors extracted from the superpixels, $\theta_a, \theta_c$ donate the parameters with respect to appearance model and latent semantic concept model, $\{w_i\}|_{i=1}^2$ are the weighting coefficients for the unary terms.
-We define the appearance model $\phi_a(h_p,a_p,\theta_a) = f_{h_p}(a_p,\theta_a)$ and latent semantic concept model $\phi_c(h_p,c_p,\theta_c) = g_{h_p}(c_p,\theta_c)$ measuring how well the local appearance $a_p$ and latent semantic concept $c_p$ matches the semantic label $h_p$.
+where $a_p, c_p$ are the appearance feature and latent semantic concept distribution vectors extracted from the superpixels, $\theta_a, \theta_c$ donate the parameters with respect to appearance model and latent semantic concept model, $w_1,w_2$ are the weighting coefficients for the unary terms.
+We define the appearance model $\phi_a(h_p,a_p,\theta_a)$ and latent semantic concept model $\phi_c(h_p,c_p,\theta_c)$ measuring how well the local appearance $a_p$ and latent semantic concept $c_p$ matches the semantic label $h_p$. The details of learning $\theta_a$ and $\theta_c$ will be illustrated in Section \ref{learningparameters}.
 
 \subsection{Pairwise Potential}
 
@@ -76,9 +76,9 @@ We model inter-label co-occurrence by constructing inter-label correlation matri
 Due to the unknown semantic annotation of superpixels, learning these latent information is an unsupervised learning problem.
 Moreover, the context contain some useful latent information which can be learned for semantic label noise reduction.
 
-Here we consider two aspects to construct inter-label matrix, on the one hand, we construct co-occurrence matrix $Cooc$ to capture the inter-label correlation. $Cooc$ is an $L \times L$ symmetric matrix and its entry $Cooc(i,j)$, measuring the co-occurrence of concepts pair $(i,j)$ based on statistics, can be defined as follows:
+Here we consider two aspects to construct inter-label matrix, on the one hand, we construct co-occurrence matrix $A$ to capture the inter-label correlation. $A$ is an $L \times L$ symmetric matrix and its entry $A(i,j)$, measuring the co-occurrence of concepts pair $(i,j)$ based on statistics, can be defined as follows:
 \begin{equation}
-    Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))
+    A(i,j) = 1-(1-P(i|j))(1-P(j|i))
 \end{equation}
 
 On the other hand, we determine the inter-label correlation via visual contextual cues. Here, we capture such visual cues by calculating the overlapping area of discriminative regions between concepts pair.
@@ -90,9 +90,9 @@ After producing a set of sub-windows, which are deemed likely to contain the dis
 In this way, we can easily construct the inter-label correlation matrix by using both the available image-level label co-occurrence and visual contextual cues (as illustrated in Figure \ref{fig:correlations}).
 More concretely, we define the label correlation potential $\varphi_{ij}$ as follows:
 \begin{equation}
-    \varphi_{ij}(y_i,y_j) = R(i,j) \cdot Cooc(i,j) \cdot I(y_i=y_j)
+    \varphi_{ij}(y_i,y_j) = R(i,j) \cdot A(i,j) \cdot \mathbf{1}(y_i \neq y_j)
 \end{equation}
-where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative regions between category $i$ and $j$, $Cooc(i,j)$ measures statistics co-occurrence and $I(\cdot)$ is the indicator function.
+where $R(i,j)$, scaled to $[0,1]$, is calculated from the overlapping area of discriminative regions between category $i$ and $j$, $A(i,j)$ measures statistics co-occurrence and $\mathbf{1}(\cdot)$ is the indicator function.
 
 \begin{figure}[t]
     \begin{center}
@@ -107,7 +107,7 @@ Considering the weakness of the single choice of segmentation, we utilize multip
 We divide the superpixels into different quantization level according to the particular segmentation scale we chose.
 Then we include the inter-level energy cost $\phi_{inter}$ to investigate the most suitable segmentation scale each object belongs to.
 Besides, we integrate the intra-level energy cost $\phi_{intra}$, which could discourage superpixel-level noise, to smooth the object boundaries.
-Let the two neighboring superpixels (inter-level or intra-level) be $x_p$ and $x_q$ (\ie, $(p,q) \in \mathcal{E}$), we define the pairwise potential $\psi_{pq}$ as follows,
+Let the two neighboring superpixels (inter-level or intra-level) be $x_p$ and $x_q$ (\ie, $(p,q) \in \mathcal{N}$), we define the pairwise potential $\psi_{pq}$ as follows,
 \begin{equation}
     \psi_{pq}(h_p,h_q) =
     \begin{cases}
@@ -121,26 +121,27 @@ Let the two neighboring superpixels (inter-level or intra-level) be $x_p$ and $x
 where $l_p$ indicates the quantization level that the superpixel $x_p$ belongs to.
 The inter-level energy cost $\phi_{inter}$ is defined as:
 \begin{equation}
-    \phi_{inter}(h_p,h_q) = \gamma \cdot O(x_p,x_q) \cdot I(h_p \neq h_q)
+    \phi_{inter}(h_p,h_q) = \gamma \cdot O(x_p,x_q) \cdot \mathbf{1}(h_p \neq h_q)
 \end{equation}
-where $O(x_p,x_q)$ refers to the intersection (overlapping area) of two superpixels, $I(\cdot)$ is the indicator function and $\gamma$ is the weighting coefficient.
+where $O(x_p,x_q)$ refers to the intersection (overlapping area) of two superpixels, $\mathbf{1}(\cdot)$ is the indicator function and $\gamma$ is the weighting coefficient.
 This formulation is based on the higher order constraints \cite{kohli2009robust,ladicky2009associative} that superpixels lying within the same clique are more likely to take the same label.
 And the intra-level energy cost $\phi_{intra}$ is defined as:
 \begin{equation}
-    \phi_{intra}(h_p,h_q) = Sim(x_p,x_q) \cdot (1-R(h_p,h_q))
+    \phi_{intra}(h_p,h_q) = S(x_p,x_q) \cdot (1-R(h_p,h_q))
 \end{equation}
-where $Sim(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel $x_p$ and $x_q$, $R(h_p,h_q) \in [0,1]$ is an inter-concept correlation between label $h_p$ and $h_q$.
+where $S(x_p,x_q) \in [0,1]$ measures the visual similarity between superpixel $x_p$ and $x_q$, $R(h_p,h_q) \in [0,1]$ is an inter-concept correlation between label $h_p$ and $h_q$.
 Hence, we pay a high cost for the similar superpixels if they were assigned different labels and for the superpixels which were assigned an irrelevant label to the context.
 
 \textbf{Label Consistency}
 We require that the superpixel labels be consistent with the image labels: if any superpixel $x_p$ takes the label $i$, then image label indicator $y_i=1$; otherwise $y_i=0$. Such constraints can be encode by the following potential:
 \begin{equation}
     \psi_{C}(\boldsymbol{y},\boldsymbol{h}) =
-    C \cdot \sum_{i,p} I(y_i=0 \mbox{ and } h_p=i)
+    W \cdot \sum_{i,p} \mathbf{1}(y_i=0 \land h_p=i)
 \end{equation}
-where $I(\cdot)$ is the indicator function and $C$ is a positive constant that penalizes any inconsistency between the image-level and superpixel-level labels. It is worth noting that such label consistency potential is a soft constraint. Thus, we can further simultaneously refine superpxiel label and image label via an iterative process.
+where $\mathbf{1}(\cdot)$ is the indicator function and $W$ is a positive constant that penalizes any inconsistency between the image-level and superpixel-level labels. It is worth noting that such label consistency potential is a soft constraint. Thus, we can further simultaneously refine superpxiel label and image label via an iterative process.
 
 \subsection{Learning Parameters}
+\label{learningparameters}
 Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential.
 Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials so as to make them comparable with unary potentials instead of using cross-validation procedure.
 After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and latent semantic concept model $\theta_c$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_c$; 2) fix $\theta_a$, $\theta_c$ and infer $\boldsymbol{h}$.
@@ -163,13 +164,13 @@ To efficiently minimize the energy function, we solve it in the following two al
 \begin{equation}
     \label{eq:binaryCRF}
     \begin{aligned}
-        \boldsymbol{y}^* = \arg\min_{\boldsymbol{y}} &\sum_{i} {\psi_{G}(y_i,I)} + \frac{1}{2} \psi_{C}(\boldsymbol{y},\boldsymbol{h}^*) \\ &+ \sum_{1 \le i,j \le L} {\psi_{R}(y_i,y_j)},
+        \boldsymbol{y}^* = \arg\min_{\boldsymbol{y}} &\sum_{i} {\varphi_{i}(y_i,I)} + \frac{1}{2} \psi_{C}(\boldsymbol{y},\boldsymbol{h}^*) \\ &+ \sum_{1 \le i,j \le L} {\varphi_{ij}(y_i,y_j)},
     \end{aligned}
 \end{equation}
 \begin{equation}
     \label{eq:multiclassCRF}
     \begin{aligned}
-        \boldsymbol{h}^* = \arg\min_{\boldsymbol{h}} &\sum_{p} {\psi_{L}(h_p,x_p)} + \frac{1}{2} \psi_{C}(\boldsymbol{y}^*,\boldsymbol{h}) \\ &+ \sum_{(p,q) \in \mathcal{E}}{\psi_{S}(h_p,h_q)}.
+        \boldsymbol{h}^* = \arg\min_{\boldsymbol{h}} &\sum_{p} {\psi_{p}(h_p,x_p)} + \frac{1}{2} \psi_{C}(\boldsymbol{y}^*,\boldsymbol{h}) \\ &+ \sum_{(p,q) \in \mathcal{N}}{\psi_{pq}(h_p,h_q)}.
     \end{aligned}
 \end{equation}
 As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:binaryCRF} has an explicit solution which utilizes min-cut/max-flow algorithms (\eg, the Dinic algorithm \cite{dinits1970algorithm}) to obtain the global optimal label configuration.
