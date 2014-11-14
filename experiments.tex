@@ -1,27 +1,4 @@
 % !TEX root = 15cvpr.tex
-\section{Experiments}
-\if
-In real world applications, multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). In this section, {\textcolor{red}{we infer semantic labels by capturing correlations among multiple labels and the interconnection between the low-level visual features and the high-level semantic concepts.}}
-
-Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
-
-As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 20 categories on the PASCAL VOC 2007 dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
-Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
-\fi
-
-In this section, we evaluate the effectiveness of our proposed approach for weakly supervised semantic segmentation for social images based on two sets of experiments. The first set of experiments compares our approach with state-of-the-art algorithms on two standard datasets. The second set of experiments verifies the robustness of our approach under the noisy condition, in the meantime, evaluates the individual components that contribute to noisy reduction.
-
-\subsection{Experimental Setup}
-\if
-In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
-\fi
-We utilize a linear maximum margin classifier leveraging both convolutional neural network feature and latent semantic concepts distribution in order to construct $\psi_{G}(y_i,I)$ for label completion. In particular, we extract a 4296 dimensional global feature vector for each image by concatenating appearance feature and latent semantic concept distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the 4096-dimensional appearance feature, and topic distribution learned from pLSA \cite{hofmann1999probabilistic}, as the 200-dimensional latent semantic concept distribution. We use the publicly available implementation \emph{Caffe} \cite{jia2014caffe} to compute the CNN features, and a one-vs-one linear support vector machine \cite{fan2008liblinear} per class for initial forecast for image-level annotations.
-
-Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the multi-scale superpixel representation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
-
-\subsection{Comparison with State-of-the-art}
-In this experiment, we compare our approach with the existing state-of-the-art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
-
 \begin{table*}[htp] \small
 \begin{center}
 \begin{tabular}{l|l|c| p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm} p{1mm}}
@@ -41,18 +18,59 @@ Supervised& Ours & 27 & 66 & 26 & 15 & 61 & 12 & 15 & 51 & 30 & 38 & 6 & 29 & 19
 \caption{Quantitative analysis of VOC2007 results \cite{pascal-voc-2007}, intersection vs. union measure, define as $\frac{TP}{TP + FN + FP}$, in comparison with state-of-the-art methods. The results of fully supervised methods are taken from \cite{pascal-voc-2007}. }
 \label{tab:ExpVOC_test}
 \end{center}
-\vspace{-6mm}
+\vspace{-3mm}
 \end{table*}
+
+\section{Experiments}
+\if
+In real world applications, multiple labels present correlatively and influence each other at semantic space (as shown in Figure \ref{fig:graphmodel} (a)). In this section, {\textcolor{red}{we infer semantic labels by capturing correlations among multiple labels and the interconnection between the low-level visual features and the high-level semantic concepts.}}
+
+Different from the multi-label learning framework for fully supervised semantic segmentation, many different types of contextual cues cannot be utilized since the pixel-level annotation is not given. It is challenging to capture the inter-label correlation due to large appearance variations in cluttered backgrounds, in addition, noisy image annotation. {\textcolor{red}{TBD:what we done}}
+
+As an illustration, Figure shows the inter-label correlation matrix illustrating the inter-dependency between 20 categories on the PASCAL VOC 2007 dataset. The brighter the block is, the stronger co-occurrence between labels exists. The dark blocks indicate the concepts pairs without correlation on the dataset.
+Among these pairs of the different concepts, we find that the concept pair of television and sofa have strong correlation.
+\fi
+
+In this section, we evaluate the effectiveness of our proposed approach for weakly supervised semantic segmentation for social images based on two sets of experiments. The first set of experiments compares our approach with state-of-the-art algorithms on two standard datasets. The second set of experiments verifies the robustness of our approach under the noisy condition, in the meantime, evaluates the individual components that contribute to noisy reduction.
+
+\subsection{Experimental Setup}
+\if
+In particular, we extract a 4296 dimensional feature vector for each image by concatenating appearance feature and topic distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the appearance feature, and topic distribution learned from pLSA \cite{hofmann1999probabilistic}, as topic distribution.
+\fi
+We utilize a linear maximum margin classifier leveraging both convolutional neural network feature and latent semantic concepts distribution in order to construct $\varphi_{i}(y_i,I)$ for label completion. In particular, we extract a 4296 dimensional global feature vector for each image by concatenating appearance feature and latent semantic concept distribution. The 4296 dimensional feature vector includes: the second to last layer of convolutional neural network \cite{simonyan2014very} pre-trained on ImageNet \cite{russakovsky2014imagenet}, as the 4096-dimensional appearance feature, and topic distribution learned from pLSA \cite{hofmann1999probabilistic}, as the 200-dimensional latent semantic concept distribution. We use the publicly available implementation \emph{Caffe} \cite{jia2014caffe} to compute the CNN features, and a one-vs-one linear support vector machine \cite{fan2008liblinear} per class for initial forecast for image-level annotations.
+
+Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the multi-scale superpixel representation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
+
+\subsection{Comparison with State-of-the-art}
+In this experiment, we compare our approach with the existing state-of-the-art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
+
+\begin{figure*}
+\begin{center}
+    \includegraphics[width=0.9\linewidth]{Fig_VOC.pdf}
+\end{center}
+%\vspace{-3mm}
+\caption{Qualitative results on the VOC-2007 data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\label{fig:VOC-2007}
+%\vspace{-3mm}
+\end{figure*}
 
 \textbf{PASCAL VOC 2007}
 This dataset was used for the PASCAL Visual Object Category segmentation contest 2007. It is especially challenging for the presence of background clutter, illumination effect and occlusions. It contains 5011 training images, and 4952 test images. Within the training set, for a subset of 422 images which are suitable for evaluation of the segmentation task, the object in these images are marked at pixel level, while the objects in the other images only have the bounding boxes indicating the location of the object and rough boundaries. And there are 20 foreground and 1 background classes in this dataset used for the task of classification, detection, and segmentation.
-
 
 \textbf{SIFT-flow} The SIFT-flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 2688 images of resolution 256x256 pixels, accompanied with a hand labeled segmentation of 33 unique semantic categories. This dataset has been widely adopted for semantic segmentation and it is also very challenging for the reason that there are large number of classes in the dataset and $4.43$ labels per image. Besides, the frequency of classes is distributed with a power-law. For fair comparison, we use standard dataset split (2488 images for training and 200 images for testing) provided by \cite{liu2011nonparametric}.
 
 \textbf{Quantitative and Qualitative Results} Comparisons of our performances against other methods (both fully supervised and weakly supervised) are given in Tables \ref{tab:ExpVOC_test} and \ref{tab:ExpSIFTflow_Test}. The results on the VOC2007 dataset show that our approach outperforms the other state-of-the-art weakly supervised methods, demonstrating that the image-level annotations are more efficiently utilized by our method. In the meantime, the results conducted by our framework are comparable with the fully supervised method even though we use much less supervised information than these methods. Similar results are obtained on the SIFT-flow dataset, which is more challenging than the previous one. It is worth noting that our method demonstrates a comparable performance in noisy condition as well, more detail will be discussed in the following section.
 
 Figures \ref{fig:VOC-2007} and \ref{fig:SIFT-flow} show the successful and failed cases of two datasets respectively. In Figure \ref{fig:VOC-2007}, the typical failure is due to the cluttered background which shares high visual similarities with the undetected objects. And in Figure \ref{fig:SIFT-flow}, the failure is mainly caused by intra-class variability which remains very challenging in computer vision community.
+
+\begin{figure*}
+\begin{center}
+    \includegraphics[width=0.9\linewidth]{Fig_SIFTflow.pdf}
+\end{center}
+%\vspace{-3mm}
+\caption{Qualitative results on the SIFT-flow data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
+\label{fig:SIFT-flow}
+\end{figure*}
 
 \begin{table}[ht]
 \begin{center}
@@ -80,7 +98,7 @@ Ours (75\% noise) & weak & 22.3 \\
 \end{center}
 %\vspace{-3mm}
 \caption{Quantitative results on the SIFT-flow dataset \cite{liu2011nonparametric}, average per-class recall measure, defined as $\frac{TP}{TP+FN}$, in comparison with state-of-the-art methods. }
-\vspace{-3mm}
+%\vspace{-3mm}
 \label{tab:ExpSIFTflow_Test}
 \end{table}
 
@@ -88,6 +106,11 @@ Ours (75\% noise) & weak & 22.3 \\
 To verify both robustness and effectiveness of our method to noisy annotation condition, we try to reproduce the real-world noise distribution to the initial image-level labels for SIFT-flow dataset. More concretely, for a certain image in the dataset, each image-level label might be omitted or replaced by other incorrect labels. Here we suppose the probability of missing label is $p_{missing}$, which controls the missing labels set proportion of the whole label set.
 
 We construct label pair confusion matrix where each entry $p_{ij}$ indicate the probability of labeling category $i$ instead of category $j$. This matrix is determined by manual observation on the empirical evidence from the collaborative image tagging system. In particular, We utilize Flickr API using queries for predefined semantic concepts and collect the number of incorrect labeling error occurred. After normalization we obtain the representative inter-label confusion probability distribution from statistics of real-world images.
+
+We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. The level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches.
+\if
+, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
+\fi
 
 \begin{table}[htb]
 \begin{center}
@@ -106,7 +129,7 @@ Label Refinement (\%) & 93.7 & 93.4 & 92.3 & 90.4 \\
 %\vspace{-3mm}
 \caption{Extra statistics on noisily labeled SIFT-flow dataset as well as quantitative results on semantic segmentation and label refinement of our approach.}
 \label{tab:ExpNoise}
-\vspace{-3mm}
+%\vspace{-3mm}
 \end{table}
 
 \begin{figure}[htb]
@@ -118,29 +141,8 @@ Label Refinement (\%) & 93.7 & 93.4 & 92.3 & 90.4 \\
 \label{fig:noisyexp}
 \end{figure}
 
-We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to obtain a set of noisy labeled datasets as shown in Table \ref{tab:ExpNoise}. The level of noise strength is determined by the percent of image with noisy annotations. It can be observed that our method can perform better or comparable results with respect to the state-of-the-art approaches.
-\if
-, whatever fully-supervised or weakly supervised method, even only using 50\% noisy real-world image.
-\fi
-
 To justify the individual components that contribute to noisy reduction, we conduct a control test as shown in Figure \ref{fig:noisyexp}. It displays the performance degradation caused by removing these components and demonstrates the indispensability of these conponents in our approach especially under the noisy condition. Moreover, Figure \ref{fig:noisyexp} shows that the label correlation significantly reduce the degradation of performance when the total number of noisy labels is within a threshold and the latent semantic concept distribution seems more effective when there are large mount of noisy labels.
 
-\begin{figure*}
-\begin{center}
-    \includegraphics[width=0.9\linewidth]{Fig_VOC.pdf}
-\end{center}
-\vspace{-3mm}
-\caption{Qualitative results on the VOC-2007 data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
-\label{fig:VOC-2007}
-\end{figure*}
 
-\begin{figure*}
-\begin{center}
-    \includegraphics[width=0.9\linewidth]{Fig_SIFTflow.pdf}
-\end{center}
-\vspace{-3mm}
-\caption{Qualitative results on the SIFT-flow data set. Successful segmentations (top 2 rows) and failure cases (bottom).}
-\label{fig:SIFT-flow}
-\end{figure*}
 
 
