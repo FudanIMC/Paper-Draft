@@ -1,0 +1,10 @@
+% !TEX root = 15cvpr.tex
+\begin{abstract}
+Semantic segmentation is the task of partitioning an image into several regions based on semantic concepts. 
+In this paper, we learn the weakly supervised semantic segmentation model from social images whose labels are provided by Internet users; however, these labels are not pixel-level but image-level, and these labels are usually imprecise and incomplete.
+We present a joint CRF model to leverage various contexts, i.e., the associations between high-level semantic concepts and low-level visual appearance, inter-label correlations, spatial neighborhood cues, and the label consistency between image-level and pixel-level. 
+More specifically, we partition the image into different quantization level according to the particular segmentation scale, and we extract global and local features for multiple scales by convolutional neural network (CNN) and topic model. 
+Inter-label correlations are captured by visual contextual cues in addition to label co-occurrence statistics.
+Experimental results on two real-world image datasets PASCAL VOC2007 and SIFT-flow show that our method outperforms state-of-the-art weakly supervised approaches and even achieves accuracy comparable with fully supervised methods.
+\end{abstract}
+

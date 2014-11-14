@@ -7,8 +7,7 @@
         \includegraphics[width=0.9\linewidth]{graphmodel.pdf}
     \end{center}
     \vspace{-3mm}
-    \caption{Example of a short caption, which should be centered.}
-    \vspace{-3mm}
+    \caption{Graph representation of our model, shadow nodes are observed variables and blank nodes are latent variables. (a) shows the learnt label correlations. (b) represents the joint inference framework. (c) shows the hierarchical model and spatial constraints.}
     \label{fig:graphmodel}
 \end{figure*}
 
@@ -68,20 +67,21 @@ where $a_p, t_p$ are the appearance and topic feature vectors extracted from the
 \textbf{Label Correlation}
 We model inter-label correlation by constructing inter-label co-occurrence matrix characterizing the interaction between semantic concepts while modeling the relationship among feature space of superpixels.
 
-\begin{figure}[htb]
-    \begin{center}
-        \includegraphics[width=1\linewidth]{fig_correlations.pdf}
-    \end{center}
-    \caption{There are two aspects involved in our label correlations: label co-occurrence based on statistics and overlapping area of discriminate region based on visual cues.}
-    \label{fig:correlations}
-\end{figure}
-
 Here we consider two aspects to construct inter-label matrix, on the one hand, we construct co-occurrence matrix $Cooc$ to capture the inter-label correlation. $Cooc$ is an $L \times L$ symmetric matrix and its entry $Cooc(i,j)$, measuring the co-occurrence of concepts pair $(i,j)$ based on statistics, can be defined as follows:
 \begin{equation}
     Cooc(i,j) = 1-(1-P(i|j))(1-P(j|i))
 \end{equation}
 
 On the other hand, we determine the inter-label correlation via \textcolor{red}{discriminative regions overlap of concepts pair}. The discriminative region of concept indicates the most informative sub-windows of each image within a multi-class classification framework. The basic idea is to analyze the variation of classification score when artificially removing different regions of the image, which means setting specific area of raw image to 0 in RGB color space. We observe that discarding a discriminative sub-window causes a massive confusion for one-vs-one classifier, especially in cluster condition. After producing a set of sub-windows, which are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image, clustering technique, {\textcolor{red}{which merges regions according to their relative drop in classification score in addition to criteria of size of the selected area,}} is applied to generate discriminative region hypotheses for semantic categories.
+
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=1\linewidth]{fig_correlations.pdf}
+    \end{center}
+    \caption{There are two aspects involved in our label correlations: label co-occurrence based on statistics and overlapping area of discriminate region based on visual cues.}
+    \label{fig:correlations}
+\end{figure}
 
 In this way, we can easily construct the inter-label correlation matrix by using both the available image-level label and region-level overlap (as illustrated in Figure \ref{fig:correlations}). More concretely, we define the label correlation potential $\psi_R$ as follows:
 \begin{equation}
@@ -125,7 +125,7 @@ where $I(\cdot)$ is the indicator function and $C$ is a positive constant that p
 Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential. Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials and make them comparable to unary potentials instead of using cross-validation procedure.
 After selecting the weights of each potential, we can learn the parameters of appearance model $\theta_a$ and topic model $\theta_t$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\theta_a$, $\theta_t$; 2) fix $\theta_a$, $\theta_t$ and infer $\boldsymbol{h}$. The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\theta_a$ and topic parameters $\theta_t$ can be found efficiently via the existing supervised methods (\eg, \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
 
-\begin{figure}[tb]
+\begin{figure}[t]
     \begin{center}
         \includegraphics[width=1\linewidth]{fig_framework.pdf}
     \end{center}

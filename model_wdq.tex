@@ -11,11 +11,11 @@
     \label{fig:graphmodel}
 \end{figure*}
 
-We formulate the semantic segmentation problem as a CRF over image superpixels incorporating various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, inter-label correlations, spatial neighborhood cues, and the label consistency between image-level and pixel-level.
+%We formulate the semantic segmentation problem as a CRF over image superpixels incorporating various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, inter-label correlations, spatial neighborhood cues, and the label consistency between image-level and pixel-level.
 
 %a set of weakly labeled social images are denoted as $\mathcal{I}=\{I_k\}_{k=1}^N$, where $N$ is the total number of  images.
 
-More formally, suppose that each image $I$ is associated with a label vector $\boldsymbol{y} = [y_1,...,y_L]$, where $L$ is the number of categories, and $y_i=1$ indicates that the $i$-th category is present in this image, otherwise $y_i=0$. In the training set, $\boldsymbol{y}$ is given; however, it may be incorrect or incomplete. In the test set, $\boldsymbol{y}$ is unknown.
+We suppose that each image $I$ is associated with a label vector $\boldsymbol{y} = [y_1,...,y_L]$, where $L$ is the number of categories, and $y_i=1$ indicates that the $i$-th category is present in this image, otherwise $y_i=0$. In the training set, $\boldsymbol{y}$ is given; however, it may be incorrect or incomplete. In the test set, $\boldsymbol{y}$ is unknown.
 For each image, we employ the existing multi-scale segmentation algorithm and get a set of superpixels   $\{x_p\}_{p=1}^M$ over multiple quantization levels.
 Here, $M$ is the total number of superpixels in image $I$.
 The label of superpixel $x_p$ is denoted as $h_p\in \{1,2,...,L\}$, and the labels of all superpixels for image $I$ are $\boldsymbol{h}=[h_1,...,h_M]$, which are not provided in training/test stage.
@@ -82,10 +82,10 @@ Here we consider two aspects to construct inter-label matrix, on the one hand, w
 \end{equation}
 where $P(i|j)$ is the empirical probability of concept $i$ occurring under the condition that concept $j$ has occurred.
 
-On the other hand, we determine the inter-label correlation via visual contextual cues. Here, we capture such visual cues by calculating the intersection-over-union (IoU) overlap of discriminative regions between concepts pair. The discriminative region of concept indicates the most informative sub-windows of each image within a multi-class classification framework.
+On the other hand, we determine the inter-label correlation via visual contextual cues. Here, we capture such visual cues by calculating the intersection-over-union (IoU) overlap of discriminative regions between concepts pair. The discriminative region of concept indicates the most informative sub-window of each image within a multi-class classification framework.
 The basic idea is to analyze the variation of classification score when artificially removing different regions of the image, which means to black-out specific area of raw image. We observe that discarding a discriminative sub-window causes a massive confusion for one-vs-one classifier, especially in cluster condition.
 
-Then we produce a set of sub-windows, which are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image. We finally utilize clustering technique, which merges regions according to their relative drop in classification score in addition to criteria of size of the selected area, to generate discriminative region hypotheses for semantic categories. In this way, we can easily construct the inter-label correlation matrix by using both the available image-level label co-occurrence and visual contextual cues (as illustrated in Figure \ref{fig:correlations}).
+Then we produce a set of sub-windows, which are deemed likely to contain the discriminative region for specific semantic label, from initial segmentation of each image. We finally utilize clustering technique, which merges regions according to their relative drop in classification score in addition to criteria of size of the selected area, to generate discriminative region hypotheses for semantic categories. In this way, we can construct the inter-label correlation matrix by using both the available image-level label co-occurrence and visual contextual clues.
 More concretely, we define the label correlation potential $\varphi_{ij}$ as follows:
 \begin{equation}
     \varphi_{ij}(y_i,y_j) = R(i,j) \cdot A(i,j) \cdot \mathbf{1}(y_i \neq y_j)
@@ -100,14 +100,14 @@ where $R(i,j)$, scaled to $[0,1]$, is calculated from the average overlapping ar
     \label{fig:correlations}
 \end{figure}
 
-As an illustration, Figure \ref{fig:correlations} demonstrates the graphical description of label correlation model. Upper left shows co-occurrence matrix $A$ displaying the interaction between semantic concepts. The brighter the block is, the stronger the co-occurrence probability is. Bottom left illustrates an example of visual contextual clues, as known as overlapping area of discriminative regions. The larger the overlap is, the closer the labels pair correlation is.
+As an illustration, Figure \ref{fig:correlations} demonstrates the graphical description of label correlation model. The top left shows co-occurrence matrix $A$ displaying the interaction between semantic concepts. The brighter the block is, the stronger the co-occurrence probability is. The bottom left illustrates an example of visual contextual clues, as known as overlapping area of discriminative regions. The larger the overlap is, the closer the labels pair relationship is.
 
-Person, motor and house are three annotated semantic concept in this image, whose discriminative region is marked as bounding box in different color. The yellow box localizes the discriminative region of motor which is almost same to ground truth. The huge overlap between motor and person, strongly suggests the closer relationship between these two concepts, compared to no overlap between motor and house. The figure on the right side clarifies the label correlation graph that integrates left two models. The interdependency of concepts pair is quantized on the edge between two label nodes. The bigger the value is, the higher the correlation is.
+Person, motor and house are three annotated semantic concepts in this image, whose discriminative region is marked as bounding box in different colors. The huge overlap between motor and person, strongly suggests the closer relationship between these two concepts, compared to no overlap between motor and house. The figure on the right side clarifies the label correlation graph that integrates two former models. The interdependency of concepts pair is quantized on the edge between two label nodes. The bigger the value is, the higher the correlation is.
 
 \textbf{Hierarchical Model and Spatial Constraints}
 Considering the weakness of the single choice of segmentation, we utilize multiple segmentations to disambiguate low-level segmentation cues.
 We divide the superpixels into different quantization level according to the particular segmentation scale we chose.
-Then we include the inter-level energy cost $\phi_{inter}$ to investigate the most suitable segmentation scale each object belongs to.
+We include the inter-level energy cost $\phi_{inter}$ to investigate the most suitable segmentation scale for each object.
 Besides, we integrate the intra-level energy cost $\phi_{intra}$, which could discourage superpixel-level noise, to smooth the object boundaries.
 Let the two neighboring superpixels (inter-level or intra-level) be $x_p$ and $x_q$ (\ie, $(p,q) \in \mathcal{N}$), we define the pairwise potential $\psi_{pq}$ as follows,
 \begin{equation}
@@ -145,7 +145,7 @@ where $\mathbf{1}(\cdot)$ is the indicator function and $C$ is a positive consta
 \subsection{Learning Parameters}
 \label{learningparameters}
 Due to the fact that pixel-level labels are not available during the training stage, we cannot use cross-validation \cite{kohli2009robust} to learn the weights for each potential.
-Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials so as to make them comparable with unary potentials instead of using cross-validation procedure.
+Inspired by \cite{vezhnevets2011weakly}, we scale the pairwise potentials so as to make them comparable with unary potentials.
 After selecting the weights of each potential, we can learn the parameters of appearance model $\boldsymbol{\theta_a}$ and latent semantic concept model $\boldsymbol{\theta_c}$ via an alternating optimization \cite{vezhnevets2011weakly}: 1) fix $\boldsymbol{h}$ and learn $\boldsymbol{\theta_a}$, $\boldsymbol{\theta_c}$; 2) fix $\boldsymbol{\theta_a}$, $\boldsymbol{\theta_c}$ and infer $\boldsymbol{h}$.
 The first step corresponds to a continues optimization problem, hence the optimal appearance parameters $\boldsymbol{\theta_a}$ and latent semantic concept parameters $\boldsymbol{\theta_c}$ can be found efficiently via the existing supervised methods (\eg, \cite{shotton2006textonboost}). The second step is a discrete optimization problem and we provide the details in Section \ref{sec:inference}.
 
@@ -153,7 +153,7 @@ The first step corresponds to a continues optimization problem, hence the optima
     \begin{center}
         \includegraphics[width=1\linewidth]{fig_framework.pdf}
     \end{center}
-    \vspace{-3mm}
+    %\vspace{-3mm}
     \caption{Illustration of our joint inference system. We simultaneously optimize the image-level label as well as superpixel-level label in a unified model so as to obtain the most suitable label configurations.}
     \label{fig:framework}
 \end{figure}
@@ -161,8 +161,8 @@ The first step corresponds to a continues optimization problem, hence the optima
 \subsection{Joint Inference with Alternating Procedure}
 \label{sec:inference}
 Given an image $I$, our task is to assign each pixel a predefined semantic label.
-We achieve this as an energy minimization problem \eqref{eq:energyfunction}, in which our inference algorithm searches for optimal configuration of image-level label $\boldsymbol{y}^\star$ and superpixel-level label $\boldsymbol{h}^\star$.
-To efficiently minimize the energy function, we solve it in the following two alternating optimization steps, which can iteratively refine superpixel labels and image labels:
+We achieve this as an energy minimization problem, in which our inference algorithm searches for optimal configuration of image-level label $\boldsymbol{y}^\star$ and superpixel-level label $\boldsymbol{h}^\star$.
+To efficiently minimize the energy function \eqref{eq:energyfunction}, we solve it in the following two alternating optimization steps, which can iteratively refine superpixel labels and image labels:
 \begin{equation}
     \label{eq:binaryCRF}
     \begin{aligned}
@@ -178,7 +178,7 @@ To efficiently minimize the energy function, we solve it in the following two al
 As a standard binary CRF problem, the first subproblem in Equation \eqref{eq:binaryCRF} has an explicit solution which utilizes min-cut/max-flow algorithms (\eg, the Dinic algorithm \cite{dinits1970algorithm}) to obtain the global optimal label configuration.
 And the second subproblem in Equation \eqref{eq:multiclassCRF} reduces to an energy minimization for a multi-class CRF.
 Although finding the global optimum for this energy function has been proved to be a NP-hard problem, there are various approximate methods for fast inference, such as approximate maximum a posteriori (MAP) methods (\eg, graph-cuts \cite{boykov2001fast}).
-In this paper, we adopt move making approach \cite{boykov2001fast} that finds the optimal $\alpha$-expansion \cite{boykov2001fast,kolmogorov2004energy} by converting the problems into binary labeling  problems which can be solved efficiently using graph cuts techniques.
+In this paper, we adopt move making approach \cite{boykov2001fast} that finds the optimal $\alpha$-expansion \cite{boykov2001fast,kolmogorov2004energy} by converting the problems into binary labeling problems, which can be solved efficiently using graph cuts techniques.
 The energy obtain by $\alpha$-expansion has been proved to be within a known factor of the global optimum \cite{boykov2001fast}. Considering the two alternate optimization steps together, we summarize our joint inference system in Algorithm \ref{alg:energy}.
 
 

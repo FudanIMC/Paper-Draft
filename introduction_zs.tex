@@ -5,7 +5,7 @@
 \begin{center}
     \includegraphics[width=1\linewidth]{fig_noisyparsing.pdf}
 \end{center}
-    \caption{Given a set of social images and their associated labels where label may be precise (green), incorrect (red) or missing (blue), we learn a model that segments and recognizes visual concept in images. Best viewed in color.}
+    \caption{Given a set of social images and their associated labels where label may be precise (green), incorrect (red) or missing (blue), we learn a joint model that segments and recognizes visual concept in images. Best viewed in color.}
 \label{fig:noisyparsing}
 \vspace{-3mm}
 \end{figure}
@@ -36,6 +36,6 @@ Our method outperforms previous state-of-the-art approaches on standard datasets
 The main contributions of this paper are summarized as follows:
 \begin{itemize}
   \item We propose a weakly supervised semantic segmentation model for social images, where only image-level labels are available for training, or even worse, the annotations can be imprecise or incomplete.
-  \item We design a joint learning framework to sufficiently leverage various contexts including feature-label association, inter-label correlation, and spatial neighborhood cues.
+  \item We design a joint learning framework to sufficiently leverage various contexts including feature-label association, inter-label correlation,  spatial neighborhood cues, and label consistency.
   \item We explore an effective strategy that cooperatively captures label co-occurrence statistics as well as visual contextual cues to model the label correlations, in addition to refine noisy labels.
 \end{itemize}
