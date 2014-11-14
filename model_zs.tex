@@ -11,7 +11,7 @@
     \label{fig:graphmodel}
 \end{figure*}
 
-We formulate the semantic segmentation problem as an Conditional Random Field (CRF) over image superpixels incorporating various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, inter-label correlations, spatial neighborhood cues, and the label consistency between image-level and pixel-level.
+We formulate the semantic segmentation problem as an conditional random field (CRF) over image superpixels incorporating various contextual relations, for instance, the associations between high-level semantic concepts and low-level visual appearance, inter-label correlations, spatial neighborhood cues, and the label consistency between image-level and pixel-level.
 
 %a set of weakly labeled social images are denoted as $\mathcal{I}=\{I_k\}_{k=1}^N$, where $N$ is the total number of  images.
 
@@ -183,14 +183,14 @@ The energy obtain by $\alpha$-expansion has been proved to be within a known fac
 \renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm
 
 \begin{algorithm}
-\caption{Energy minimization Inference}
+\caption{Energy Minimization Inference}
 \label{alg:energy}
 \begin{algorithmic}[1]
     \Require
-    a test image $I$ and its representation of superpixels $\{x_p\}$
+    a image $I$ and its representation of superpixels $\{x_p\}$
     \Ensure
     the image-level label variables $\boldsymbol{y}$ and the superpixel-level label variables $\boldsymbol{h}$
-    \State Construct the graphical model as shown in Figure \ref{fig:graphmodel}.
+    \State Construct the graphical model according to the energy function \eqref{eq:energyfunction}.
     \State Initialize $\boldsymbol{y}$ and $\boldsymbol{h}$ with the highest unary potential according to Equation \eqref{eq:global} and \eqref{eq:local}, respectively.
     \For{ iteration $t=1$ to $T$ }
         \State fix $\boldsymbol{y}$, optimize $\boldsymbol{h}$ via Equation \eqref{eq:multiclassCRF}
