@@ -54,7 +54,7 @@ Formally, we formulate image-level feature as $I$ by concatenating the appearanc
     \varphi_{i}(y_i,I) = -\log f_{i}(I)
     \label{eq:global}
 \end{equation}
-where $f_{i}(I)$ is the linear support vector machine score function associated with label $i$.
+where $f_{i}(I)$ is the linear support vector machine    score function associated with label $i$.
 
 \textbf{Superpixel-Level Potential}
 Similar with image-level potential, we both consider the appearance model and latent semantic concept model in order to narrow down the gap between low-level feature space and high-level semantic space, in the meantime, to reduce the negative impact of inaccurate image-level labels.
@@ -160,7 +160,7 @@ The first step corresponds to a continues optimization problem, hence the optima
 \label{sec:inference}
 Given an image $I$, our task is to assign each pixel a predefined semantic label.
 We achieve this as an energy minimization problem \eqref{eq:energyfunction}, in which our inference algorithm searches for optimal configuration of image-level label $\boldsymbol{y}^\star$ and superpixel-level label $\boldsymbol{h}^\star$.
-To efficiently minimize the energy function, we solve it in the following two alternating optimization steps:
+To efficiently minimize the energy function, we solve it in the following two alternating optimization steps, which can iteratively refine superpixel labels and image labels:
 \begin{equation}
     \label{eq:binaryCRF}
     \begin{aligned}

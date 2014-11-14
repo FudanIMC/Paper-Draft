@@ -42,7 +42,7 @@ We utilize a linear maximum margin classifier leveraging both convolutional neur
 Then, we employ the Multiscale Combinatorial Grouping System \cite{arbelaez2014multiscale} to obtain the multi-scale superpixel representation of each image. Concretely, we use three segmentation scales to generate about 10, 30, 50 superpixels per image respectively. We represent each superpixel by its appearance feature and latent semantic concept distribution, which are extracted in the same way as the global features.
 
 \subsection{Comparison with State-of-the-art}
-In this experiment, we compare our approach with the existing state-of-the-art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two real-world datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
+In this experiment, we compare our approach with the existing state-of-the-art weakly supervised semantic segmentation methods as well as fully supervised semantic segmentation algorithms on two challenging datasets: PASCAL VOC 2007 \cite{pascal-voc-2007} and SIFT-flow \cite{liu2011nonparametric}.
 
 \begin{figure*}
 \begin{center}
@@ -55,7 +55,7 @@ In this experiment, we compare our approach with the existing state-of-the-art w
 \end{figure*}
 
 \textbf{PASCAL VOC 2007}
-This dataset was used for the PASCAL Visual Object Category segmentation contest 2007. It is especially challenging for the presence of background clutter, illumination effect and occlusions. It contains 5011 training images, and 4952 test images. Within the training set, for a subset of 422 images which are suitable for evaluation of the segmentation task, the object in these images are marked at pixel level, while the objects in the other images only have the bounding boxes indicating the location of the object and rough boundaries. And there are 20 foreground and 1 background classes in this dataset used for the task of classification, detection, and segmentation.
+This dataset was used for the PASCAL Visual Object Category segmentation contest 2007. It is especially challenging for the presence of background clutter, illumination effect and occlusions. It contains 5011 training images, and 4952 test images. Within the training set, for a subset of 422 images which are suitable for evaluation of the segmentation task, the object in these images are marked at pixel level; while the objects in the other images only have the bounding boxes indicating the location of the object and rough boundaries. And there are 20 foreground and 1 background classes in this dataset used for the task of classification, detection, and segmentation.
 
 \textbf{SIFT-flow} The SIFT-flow dataset\cite{liu2011nonparametric} is derived from the LabelMe subset and contains 2688 images of resolution 256x256 pixels, accompanied with a hand labeled segmentation of 33 unique semantic categories. This dataset has been widely adopted for semantic segmentation and it is also very challenging for the reason that there are large number of classes in the dataset and $4.43$ labels per image. Besides, the frequency of classes is distributed with a power-law. For fair comparison, we use standard dataset split (2488 images for training and 200 images for testing) provided by \cite{liu2011nonparametric}.
 
@@ -116,7 +116,7 @@ We fix the probability $p_{ij}$, and set different values of $p_{missing}$ to ob
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-Images with Noisy Label (\%) & 10 & 25 & 50 & 75 \\
+Noisily Labeled Images (\%) & 10 & 25 & 50 & 75 \\
 \hline
 Noisy Labels per Image & 1.3 & 1.4 & 1.7 & 2.4 \\
 \hline
@@ -137,7 +137,7 @@ Label Refinement (\%) & 93.7 & 93.4 & 92.3 & 90.4 \\
     \includegraphics[width=1\linewidth]{fig_noisylabel.pdf}
 \end{center}
 \vspace{-3mm}
-\caption{Performance decrease on noisily labeled SIFT-flow dataset of components removing under the noisy condition.}
+\caption{Evaluation of the individual components on noisily labeled SIFT-flow dataset.}
 \label{fig:noisyexp}
 \end{figure}
 
